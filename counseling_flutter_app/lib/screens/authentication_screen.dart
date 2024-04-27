@@ -20,6 +20,7 @@ class AuthenticationScreen extends StatelessWidget {
         ),
         child: Center(
           child: SingleChildScrollView(
+            reverse: true,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -33,10 +34,10 @@ class AuthenticationScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Theme.of(context).colorScheme.onBackground,
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 5),
                 isLogin ? LoginForm() : SignUpForm(),
               ],
             ),
