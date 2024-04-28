@@ -1,19 +1,52 @@
-import 'package:counseling_flutter_app/screens/main_application_screen.dart';
 import 'package:flutter/material.dart';
+
+import 'package:counseling_flutter_app/screens/main_application_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+final _firebaseAuth = FirebaseAuth.instance;
 
 class LoginForm extends StatelessWidget {
   const LoginForm({super.key});
 
+  void _signInWithEmailAndPassword(
+      BuildContext context, String email, String password) async {
+    try {
+      final userCredentials = await _firebaseAuth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      print(userCredentials);
+
+      /* Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const MainApplicationScreen(),
+        ),
+      ); */
+    } on FirebaseAuthException catch (error) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(error.message ?? 'Authentication failed.'),
+      ));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    String email = '';
+    String password = '';
+
     return Container(
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
           TextField(
+            keyboardType: TextInputType.emailAddress,
+            onChanged: (value) => email = value.trim(),
             decoration: InputDecoration(
-              labelText: 'Username',
-              prefixIcon: const Icon(Icons.person),
+              labelText: 'Email',
+              prefixIcon: const Icon(Icons.email),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -23,6 +56,7 @@ class LoginForm extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           TextField(
+            onChanged: (value) => password = value,
             obscureText: true,
             decoration: InputDecoration(
               labelText: 'Password',
@@ -36,14 +70,8 @@ class LoginForm extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const MainApplicationScreen(),
-                ),
-              );
-            },
+            onPressed: () =>
+                _signInWithEmailAndPassword(context, email, password),
             style: ElevatedButton.styleFrom(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
