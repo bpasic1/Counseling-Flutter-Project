@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "812118734173",
+    "project_id": "bpasic1-firebase-msc",
+    "storage_bucket": "bpasic1-firebase-msc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:812118734173:android:d1944eae67f7c8d2ef64b4",
+        "android_client_info": {
+          "package_name": "com.example.counseling_flutter_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCLV8VBk0WLG2z-lYn5dTNprLR-ef-lEW0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

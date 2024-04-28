@@ -1,3 +1,4 @@
+import 'package:counseling_flutter_app/screens/main_application_screen.dart';
 import 'package:flutter/material.dart';
 
 class LoginForm extends StatelessWidget {
@@ -36,7 +37,12 @@ class LoginForm extends StatelessWidget {
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: () {
-              // Implement login functionality
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const MainApplicationScreen(),
+                ),
+              );
             },
             style: ElevatedButton.styleFrom(
               shape: RoundedRectangleBorder(
