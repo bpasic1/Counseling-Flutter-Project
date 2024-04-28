@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+final _firebase = FirebaseAuth.instance;
 
 class SignUpForm extends StatefulWidget {
   const SignUpForm({super.key});
@@ -8,7 +11,7 @@ class SignUpForm extends StatefulWidget {
 }
 
 class _SignUpFormState extends State<SignUpForm> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -42,18 +45,26 @@ class _SignUpFormState extends State<SignUpForm> {
     return null;
   }
 
-  void _submitForm() {
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-// All fields are valid, perform signup action
-      _registerUser();
-    } else {
-// Fields are not valid, show error messages
-    }
-  }
+      _formKey.currentState!.save();
 
-  void _registerUser() {
-// Implement your user registration logic here
-// Access the entered values using _firstNameController.text, _lastNameController.text, etc.
+      String email = _emailController.text;
+      String password = _passwordController.text;
+
+      try {
+        final userCredentials = await _firebase.createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+        print(userCredentials);
+      } on FirebaseAuthException catch (error) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(error.message ?? 'Authentication failed.'),
+        ));
+      }
+    }
   }
 
   @override
@@ -65,6 +76,7 @@ class _SignUpFormState extends State<SignUpForm> {
         child: Column(
           children: [
             TextFormField(
+              keyboardType: TextInputType.name,
               controller: _firstNameController,
               validator: _validateFirstName,
               decoration: InputDecoration(
@@ -79,6 +91,7 @@ class _SignUpFormState extends State<SignUpForm> {
             ),
             const SizedBox(height: 10),
             TextFormField(
+              keyboardType: TextInputType.name,
               controller: _lastNameController,
               validator: _validateLastName,
               decoration: InputDecoration(
@@ -93,6 +106,7 @@ class _SignUpFormState extends State<SignUpForm> {
             ),
             const SizedBox(height: 10),
             TextFormField(
+              keyboardType: TextInputType.emailAddress,
               controller: _emailController,
               validator: _validateEmail,
               decoration: InputDecoration(
