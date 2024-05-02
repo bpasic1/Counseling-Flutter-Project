@@ -7,6 +7,10 @@ class AuthenticationScreen extends StatelessWidget {
 
   const AuthenticationScreen({super.key, required this.isLogin});
 
+  void _navigateBack(BuildContext context) {
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +42,9 @@ class AuthenticationScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 5),
-                isLogin ? LoginForm() : SignUpForm(),
+                isLogin
+                    ? LoginForm(navigateBack: () => _navigateBack(context))
+                    : SignUpForm(navigateBack: () => _navigateBack(context)),
               ],
             ),
           ),

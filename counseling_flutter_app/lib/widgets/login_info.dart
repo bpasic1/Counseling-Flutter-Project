@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
-import 'package:counseling_flutter_app/screens/main_application_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 final _firebaseAuth = FirebaseAuth.instance;
 
 class LoginForm extends StatelessWidget {
-  const LoginForm({super.key});
+  final VoidCallback navigateBack;
+
+  const LoginForm({super.key, required this.navigateBack});
 
   void _signInWithEmailAndPassword(
       BuildContext context, String email, String password) async {
@@ -16,14 +17,9 @@ class LoginForm extends StatelessWidget {
         password: password,
       );
 
-      print(userCredentials);
+      print('User signed in: $userCredentials');
 
-      /* Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const MainApplicationScreen(),
-        ),
-      ); */
+      navigateBack();
     } on FirebaseAuthException catch (error) {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(

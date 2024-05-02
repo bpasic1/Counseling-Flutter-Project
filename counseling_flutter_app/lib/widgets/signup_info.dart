@@ -5,7 +5,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 final _firebase = FirebaseAuth.instance;
 
 class SignUpForm extends StatefulWidget {
-  const SignUpForm({super.key});
+  final VoidCallback navigateBack;
+
+  const SignUpForm({super.key, required this.navigateBack});
 
   @override
   State<SignUpForm> createState() => _SignUpFormState();
@@ -59,6 +61,8 @@ class _SignUpFormState extends State<SignUpForm> {
           password: password,
         );
         print(userCredentials);
+
+        widget.navigateBack();
       } on FirebaseAuthException catch (error) {
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
