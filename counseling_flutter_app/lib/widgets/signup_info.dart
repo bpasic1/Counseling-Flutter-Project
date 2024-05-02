@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 final _firebase = FirebaseAuth.instance;
 
@@ -52,6 +53,8 @@ class _SignUpFormState extends State<SignUpForm> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
+      String firstName = _firstNameController.text;
+      String lastName = _lastNameController.text;
       String email = _emailController.text;
       String password = _passwordController.text;
 
@@ -60,7 +63,17 @@ class _SignUpFormState extends State<SignUpForm> {
           email: email,
           password: password,
         );
-        print(userCredentials);
+
+        String uid = userCredentials.user!.uid;
+
+        await FirebaseFirestore.instance.collection('users').doc(uid).set({
+          'firstName': firstName,
+          'lastName': lastName,
+          'email': email,
+          'role': 'user'
+        });
+
+        print('User added to Firestore successfully.');
 
         widget.navigateBack();
       } on FirebaseAuthException catch (error) {
