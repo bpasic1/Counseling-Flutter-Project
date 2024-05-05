@@ -1,17 +1,38 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:counseling_flutter_app/screens/profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class MainApplicationScreen extends StatelessWidget {
+class MainApplicationScreen extends StatefulWidget {
   final bool isNewUser;
 
-  const MainApplicationScreen({super.key, required this.isNewUser});
+  const MainApplicationScreen({Key? key, required this.isNewUser})
+      : super(key: key);
+
+  @override
+  State<MainApplicationScreen> createState() => _MainApplicationScreenState();
+}
+
+class _MainApplicationScreenState extends State<MainApplicationScreen> {
+  late String username = '';
+  late String email = '';
+  late String firstName = '';
+  late String lastName = '';
+  bool isLoading = true;
+
+  late Stream<DocumentSnapshot> userDataStream;
+
+  @override
+  void initState() {
+    super.initState();
+    User? user = FirebaseAuth.instance.currentUser;
+    String? userId = user?.uid;
+    userDataStream =
+        FirebaseFirestore.instance.collection('users').doc(userId).snapshots();
+  }
 
   @override
   Widget build(BuildContext context) {
-    User? user = FirebaseAuth.instance.currentUser;
-    String? userId = user?.uid;
-
     return Scaffold(
       backgroundColor: Colors.lightBlue.shade50,
       appBar: AppBar(
@@ -29,9 +50,8 @@ class MainApplicationScreen extends StatelessWidget {
         ],
       ),
       drawer: Drawer(
-        child: FutureBuilder<DocumentSnapshot>(
-          future:
-              FirebaseFirestore.instance.collection('users').doc(userId).get(),
+        child: StreamBuilder<DocumentSnapshot>(
+          stream: userDataStream,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return CircularProgressIndicator();
@@ -41,8 +61,10 @@ class MainApplicationScreen extends StatelessWidget {
               return Text('User data not found');
             } else {
               var userData = snapshot.data!.data() as Map<String, dynamic>;
-              String username = userData['username'];
-              String email = userData['email'];
+              username = userData['username'] ?? '';
+              email = userData['email'];
+              firstName = userData['firstName'];
+              lastName = userData['lastName'];
               return ListView(
                 padding: EdgeInsets.zero,
                 children: [
@@ -61,28 +83,34 @@ class MainApplicationScreen extends StatelessWidget {
                   ListTile(
                     title: Text('Profile'),
                     onTap: () {
-                      // Navigate to the Profile screen
-                      Navigator.pop(context); // Close the drawer
-                      // You can implement navigation to the Profile screen here
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProfileScreen(
+                            username: username,
+                            email: email,
+                            firstName: firstName,
+                            lastName: lastName,
+                          ),
+                        ),
+                      );
                     },
                   ),
                   ListTile(
                     title: Text('Reviews'),
                     onTap: () {
-                      // Navigate to the Reviews screen
-                      Navigator.pop(context); // Close the drawer
+                      Navigator.pop(context);
                       // You can implement navigation to the Reviews screen here
                     },
                   ),
                   ListTile(
                     title: Text('Advices'),
                     onTap: () {
-                      // Navigate to the Advices screen
-                      Navigator.pop(context); // Close the drawer
+                      Navigator.pop(context);
                       // You can implement navigation to the Advices screen here
                     },
                   ),
-                  // Add more ListTile widgets for additional options as needed
                 ],
               );
             }
@@ -100,7 +128,7 @@ class MainApplicationScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              isNewUser ? 'Welcome, new user!' : 'Welcome back!',
+              widget.isNewUser ? 'Welcome, new user!' : 'Welcome back!',
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,

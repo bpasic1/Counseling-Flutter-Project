@@ -39,3 +39,17 @@ exports.createUsername = functions.auth.user().onCreate(async (user) => {
 
   console.log('Username added to user document:', username);
 });
+
+
+
+exports.changePassword = functions.https.onRequest(async (req, res) => {
+    const { userId, newPassword } = req.body;
+  
+    try {
+      await admin.auth().updateUser(userId, { password: newPassword });
+      res.status(200).send('Password updated successfully');
+    } catch (error) {
+      console.error('Error updating password:', error);
+      res.status(500).send('Error updating password');
+    }
+  });
