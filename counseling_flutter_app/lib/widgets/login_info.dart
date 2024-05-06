@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'forgot_password_dialog.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 final _firebaseAuth = FirebaseAuth.instance;
 
@@ -26,6 +30,40 @@ class LoginForm extends StatelessWidget {
         content: Text(error.message ?? 'Authentication failed.'),
       ));
     }
+  }
+
+  Future<String?> _resetPassword(String email) async {
+    try {
+      final url = Uri.parse(
+          'https://us-central1-bpasic1-firebase-msc.cloudfunctions.net/forgotPassword');
+      final response = await http.post(
+        url,
+        body: jsonEncode({'email': email}),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        return 'Password reset email sent successfully.';
+      } else {
+        return 'Failed to send password reset email.';
+      }
+    } catch (error) {
+      return 'An error occurred: $error';
+    }
+  }
+
+  void _showForgotPasswordDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => ForgotPasswordDialog(
+        onResetPassword: (email) async {
+          final message = await _resetPassword(email);
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(message ?? ''),
+          ));
+        },
+      ),
+    );
   }
 
   @override
@@ -79,6 +117,10 @@ class LoginForm extends StatelessWidget {
               'Sign In',
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
+          ),
+          TextButton(
+            onPressed: () => _showForgotPasswordDialog(context),
+            child: Text('Forgot Password?'),
           ),
         ],
       ),
