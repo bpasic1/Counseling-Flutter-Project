@@ -1,10 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:counseling_flutter_app/service/firestore_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SelectExpertScreen extends StatelessWidget {
-  final List<String> selectedExperts;
+  final List<String> existingChats;
 
-  const SelectExpertScreen({Key? key, required this.selectedExperts})
+  const SelectExpertScreen({Key? key, required this.existingChats})
       : super(key: key);
 
   @override
@@ -13,7 +15,7 @@ class SelectExpertScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Select Expert'),
       ),
-      body: ExpertList(selectedExperts: selectedExperts),
+      body: ExpertList(selectedExperts: existingChats),
     );
   }
 }
@@ -40,25 +42,40 @@ class ExpertList extends StatelessWidget {
           if (experts.isEmpty) {
             return Center(child: Text('No experts found.'));
           }
-          // Filter out selected experts
-          final filteredExperts = experts
-              .where((expert) => !selectedExperts
-                  .contains('${expert['firstName']} ${expert['lastName']}'))
-              .toList();
-          if (filteredExperts.isEmpty) {
-            return Center(child: Text('No experts found.'));
-          }
+
+          /* final existingExpertIds = selectedExperts.map((chat) {
+            final ids = chat.split(' - ');
+            return ids[
+                1]; // Assuming the expert ID is the second part of the chat string
+          }).toList(); */
+
+          final existingExpertIds = selectedExperts;
+
           return ListView.builder(
-            itemCount: filteredExperts.length,
+            itemCount: experts.length,
             itemBuilder: (context, index) {
-              final expertData =
-                  filteredExperts[index].data() as Map<String, dynamic>;
+              final expertData = experts[index].data() as Map<String, dynamic>;
+              final expertId = experts[index].id;
+              if (existingExpertIds.contains(expertId)) {
+                // If the expert is already in the chat list, don't display them
+                return SizedBox.shrink();
+              }
               final expertName =
                   '${expertData['firstName']} ${expertData['lastName']}';
               return ListTile(
                 title: Text(expertName),
-                onTap: () {
-                  Navigator.pop(context, expertName);
+                onTap: () async {
+                  final user = FirebaseAuth.instance.currentUser;
+                  if (user != null) {
+                    final userId = user.uid;
+                    // Start conversation between user and expert
+                    await FirestoreService()
+                        .startConversation(userId, expertId);
+                    Navigator.pop(context, expertName);
+                  } else {
+                    // Handle the case where the user is not logged in
+                    print('User not logged in');
+                  }
                 },
               );
             },
