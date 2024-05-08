@@ -1,5 +1,5 @@
-import 'package:counseling_flutter_app/widgets/change_password_dialog.dart';
-import 'package:counseling_flutter_app/widgets/read_only_text_field.dart';
+import 'package:counseling_flutter_app/widgets/password_widgets/change_password_dialog.dart';
+import 'package:counseling_flutter_app/widgets/auth_profile_widgets/read_only_text_field.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatelessWidget {

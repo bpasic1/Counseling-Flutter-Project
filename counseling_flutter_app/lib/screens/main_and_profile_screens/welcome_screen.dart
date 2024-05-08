@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:counseling_flutter_app/screens/authentication_screen.dart';
+import 'package:counseling_flutter_app/screens/main_and_profile_screens/authentication_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:counseling_flutter_app/screens/profile_screen.dart';
+import 'package:counseling_flutter_app/screens/chats_screen.dart';
+import 'package:counseling_flutter_app/screens/main_and_profile_screens/profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -98,17 +99,15 @@ class _MainApplicationScreenState extends State<MainApplicationScreen> {
                     },
                   ),
                   ListTile(
-                    title: Text('Reviews'),
+                    title: Text('Chats'),
                     onTap: () {
                       Navigator.pop(context);
-                      // You can implement navigation to the Reviews screen here
-                    },
-                  ),
-                  ListTile(
-                    title: Text('Advices'),
-                    onTap: () {
-                      Navigator.pop(context);
-                      // You can implement navigation to the Advices screen here
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatsScreen(),
+                        ),
+                      );
                     },
                   ),
                 ],

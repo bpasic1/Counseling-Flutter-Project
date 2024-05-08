@@ -1,5 +1,5 @@
-import 'package:counseling_flutter_app/widgets/login_info.dart';
-import 'package:counseling_flutter_app/widgets/signup_info.dart';
+import 'package:counseling_flutter_app/widgets/auth_profile_widgets/login_info.dart';
+import 'package:counseling_flutter_app/widgets/auth_profile_widgets/signup_info.dart';
 import 'package:flutter/material.dart';
 
 class AuthenticationScreen extends StatelessWidget {
