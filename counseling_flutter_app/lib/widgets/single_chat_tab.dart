@@ -1,3 +1,4 @@
+import 'package:counseling_flutter_app/widgets/chat_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:counseling_flutter_app/screens/chat_screen.dart';
@@ -29,11 +30,14 @@ class _SingleChatTabState extends State<SingleChatTab> {
                 : ListView.builder(
                     itemCount: chats.length,
                     itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(chats[index]['name']),
+                      return ChatCard(
+                        name: chats[index]['name'],
                         onTap: () {
                           _startConversation(
-                              chats[index]['name'], chats[index]['id']);
+                            selectedExpertName: chats[index]['name'],
+                            //chats[index]['id'],
+                            documentId: chats[index]['document_id'],
+                          );
                         },
                       );
                     },
@@ -59,7 +63,11 @@ class _SingleChatTabState extends State<SingleChatTab> {
             ),
           );
           if (selectedExpert != null) {
-            _startConversation(selectedExpert['name'], selectedExpert['id']);
+            _startConversation(
+              selectedExpertName: selectedExpert['name'],
+              selectedExpertId: selectedExpert['id'],
+              documentId: selectedExpert['document_id'],
+            );
           }
         },
         child: Icon(Icons.add),
@@ -86,18 +94,24 @@ class _SingleChatTabState extends State<SingleChatTab> {
           final conversationIds = <String>{};
           for (final doc in userConversations.docs) {
             final data = doc.data() as Map<String, dynamic>;
+            final documentId = doc.id;
             final conversationId = '${data['user_id']}-${data['expert_id']}';
             if (!conversationIds.contains(conversationId)) {
               final expertId = data['expert_id'];
               final expertData = await _getUserDetails(expertId);
               final expertName =
                   '${expertData['firstName']} ${expertData['lastName']}';
-              chats.add({'name': expertName, 'id': expertId});
+              chats.add({
+                'name': expertName,
+                'id': expertId,
+                'document_id': documentId
+              });
               conversationIds.add(conversationId);
             }
           }
           for (final doc in expertConversations.docs) {
             final data = doc.data() as Map<String, dynamic>;
+            final documentId = doc.id;
             final conversationId = '${data['user_id']}-${data['expert_id']}';
             if (!conversationIds.contains(conversationId)) {
               final expertId = data[
@@ -105,7 +119,11 @@ class _SingleChatTabState extends State<SingleChatTab> {
               final expertData = await _getUserDetails(expertId);
               final expertName =
                   '${expertData['firstName']} ${expertData['lastName']}';
-              chats.add({'name': expertName, 'id': expertId});
+              chats.add({
+                'name': expertName,
+                'id': expertId,
+                'document_id': documentId
+              });
               conversationIds.add(conversationId);
             }
           }
@@ -122,14 +140,17 @@ class _SingleChatTabState extends State<SingleChatTab> {
     return userSnapshot.data() as Map<String, dynamic>;
   }
 
-  void _startConversation(
-      String selectedExpertName, String selectedExpertId) async {
+  void _startConversation({
+    required String selectedExpertName,
+    String? selectedExpertId,
+    required String documentId,
+  }) async {
     // Navigate to the chat screen
     await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => ChatScreen(
-          chatTitle: selectedExpertName,
+          chatId: documentId,
           //chatId: selectedExpertId,
         ),
       ),
