@@ -35,6 +35,7 @@ class _SingleChatTabState extends State<SingleChatTab> {
                         onTap: () {
                           _startConversation(
                             selectedExpertName: chats[index]['name'],
+                            username: chats[index]['username'],
                             //chats[index]['id'],
                             documentId: chats[index]['document_id'],
                           );
@@ -66,6 +67,7 @@ class _SingleChatTabState extends State<SingleChatTab> {
             _startConversation(
               selectedExpertName: selectedExpert['name'],
               selectedExpertId: selectedExpert['id'],
+              username: selectedExpert['username'],
               documentId: selectedExpert['document_id'],
             );
           }
@@ -144,6 +146,7 @@ class _SingleChatTabState extends State<SingleChatTab> {
     required String selectedExpertName,
     String? selectedExpertId,
     required String documentId,
+    required String username,
   }) async {
     // Navigate to the chat screen
     await Navigator.push(
@@ -151,6 +154,7 @@ class _SingleChatTabState extends State<SingleChatTab> {
       MaterialPageRoute(
         builder: (context) => ChatScreen(
           chatId: documentId,
+
           //chatId: selectedExpertId,
         ),
       ),

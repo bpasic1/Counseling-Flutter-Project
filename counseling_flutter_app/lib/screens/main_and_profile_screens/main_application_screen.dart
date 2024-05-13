@@ -119,18 +119,30 @@ class _MainApplicationScreenState extends State<MainApplicationScreen> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.check_circle,
-              size: 100,
-              color: Colors.green,
+            Image.asset(
+              'assets/counsle3.png', // Add your image asset here
+              height: 200,
             ),
             const SizedBox(height: 20),
             Text(
-              widget.isNewUser ? 'Welcome, new user!' : 'Welcome back!',
-              style: const TextStyle(
+              'Welcome to Advice Haven!',
+              style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                'We are here to provide you with support and guidance '
+                'through your journey!',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                ),
               ),
             ),
           ],

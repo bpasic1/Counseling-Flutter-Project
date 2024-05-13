@@ -36,8 +36,12 @@ class MessageBubble extends StatelessWidget {
             if (isExpertMessage) ...[
               // Display the icon to the left of the user/expert you are talking to
               Padding(
-                child: Icon(Icons.person),
                 padding: const EdgeInsets.only(right: 8.0),
+                child: SizedBox(
+                  height:
+                      40, // Match the height with the height of the message container
+                  child: Icon(Icons.person),
+                ),
               ),
             ],
             Flexible(
@@ -53,7 +57,11 @@ class MessageBubble extends StatelessWidget {
               // Display the icon to the right of the current user's messages
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
-                child: Icon(Icons.person),
+                child: SizedBox(
+                  height:
+                      40, // Match the height with the height of the message container
+                  child: Icon(Icons.person),
+                ),
               ),
             ],
           ],

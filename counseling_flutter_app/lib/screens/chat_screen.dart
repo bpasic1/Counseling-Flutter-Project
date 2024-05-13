@@ -81,10 +81,10 @@ class MessageList extends StatelessWidget {
 class SendMessageForm extends StatefulWidget {
   final String chatId;
 
-  SendMessageForm({required this.chatId});
+  const SendMessageForm({super.key, required this.chatId});
 
   @override
-  _SendMessageFormState createState() => _SendMessageFormState();
+  State<SendMessageForm> createState() => _SendMessageFormState();
 }
 
 class _SendMessageFormState extends State<SendMessageForm> {
