@@ -54,13 +54,13 @@ class _SingleChatTabState extends State<SingleChatTab> {
         stream: _fetchChats(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
             final List<Map<String, dynamic>> chats = snapshot.data ?? [];
             return chats.isEmpty
-                ? Center(child: Text('No messages found.'))
+                ? const Center(child: Text('No messages found.'))
                 : ListView.builder(
                     itemCount: chats.length,
                     itemBuilder: (context, index) {
@@ -90,8 +90,6 @@ class _SingleChatTabState extends State<SingleChatTab> {
               onPressed: () async {
                 final List<Map<String, dynamic>> chats =
                     await _fetchChats().first;
-                final List<String> existingChats =
-                    chats.map((chat) => chat['name'] as String).toList();
                 final List<String> existingChatIds =
                     chats.map((chat) => chat['id'] as String).toList();
                 final selectedExpert = await Navigator.push(
@@ -113,7 +111,7 @@ class _SingleChatTabState extends State<SingleChatTab> {
                   ); */
                 }
               },
-              child: Icon(Icons.add),
+              child: const Icon(Icons.add),
             )
           : null,
     );
@@ -137,7 +135,7 @@ class _SingleChatTabState extends State<SingleChatTab> {
           final chats = <Map<String, dynamic>>[];
           final conversationIds = <String>{};
           for (final doc in userConversations.docs) {
-            final data = doc.data() as Map<String, dynamic>;
+            final data = doc.data();
             final documentId = doc.id;
             final conversationId = '${data['user_id']}-${data['expert_id']}';
             if (!conversationIds.contains(conversationId)) {
@@ -154,7 +152,7 @@ class _SingleChatTabState extends State<SingleChatTab> {
             }
           }
           for (final doc in expertConversations.docs) {
-            final data = doc.data() as Map<String, dynamic>;
+            final data = doc.data();
             final documentId = doc.id;
             final conversationId = '${data['user_id']}-${data['expert_id']}';
             if (!conversationIds.contains(conversationId)) {

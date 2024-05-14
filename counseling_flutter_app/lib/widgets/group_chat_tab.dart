@@ -6,7 +6,7 @@ class GroupChatTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Replace this with your implementation for Group Chats
-    return Center(
+    return const Center(
       child: Text('Group Chats Tab'),
     );
   }

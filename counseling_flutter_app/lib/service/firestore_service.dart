@@ -18,8 +18,6 @@ class FirestoreService {
       // Create a new messages subcollection within the conversation document
       final messagesCollectionRef = conversationDocRef.collection('messages');
 
-      // You can add an initial message here if needed
-
       print('Conversation started successfully');
     } catch (e) {
       print('Error starting conversation: $e');

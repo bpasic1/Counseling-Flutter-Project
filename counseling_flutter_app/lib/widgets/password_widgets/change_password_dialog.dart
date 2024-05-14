@@ -18,19 +18,20 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Change Password'),
+      title: const Text('Change Password'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
             controller: newPasswordController,
-            decoration: InputDecoration(labelText: 'New Password'),
+            decoration: const InputDecoration(labelText: 'New Password'),
             obscureText: true,
             enabled: !isLoading, // Disable text field while loading
           ),
           TextField(
             controller: confirmNewPasswordController,
-            decoration: InputDecoration(labelText: 'Confirm New Password'),
+            decoration:
+                const InputDecoration(labelText: 'Confirm New Password'),
             obscureText: true,
             enabled: !isLoading, // Disable text field while loading
           ),
@@ -43,7 +44,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
               : () {
                   Navigator.pop(context); // Close the dialog
                 },
-          child: Text('Cancel'),
+          child: const Text('Cancel'),
         ),
         ElevatedButton(
           onPressed: isLoading
@@ -57,7 +58,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                   if (newPassword != confirmNewPassword) {
                     ScaffoldMessenger.of(context).clearSnackBars();
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
+                      const SnackBar(
                         content: Text(
                             'New password and confirm password do not match'),
                       ),
@@ -69,7 +70,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                     // Password too short, display error message
                     ScaffoldMessenger.of(context).clearSnackBars();
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
+                      const SnackBar(
                         content:
                             Text('Password must be at least 6 characters long'),
                       ),
@@ -91,8 +92,8 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                   });
                 },
           child: isLoading
-              ? CircularProgressIndicator() // Show circular progress indicator
-              : Text('Change'),
+              ? const CircularProgressIndicator() // Show circular progress indicator
+              : const Text('Change'),
         ),
       ],
     );
@@ -113,13 +114,13 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Password changed successfully')),
+        const SnackBar(content: Text('Password changed successfully')),
       );
       Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to change password')),
+        const SnackBar(content: Text('Failed to change password')),
       );
     }
   }

@@ -21,14 +21,14 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.lightBlue.shade50,
       appBar: AppBar(
-        title: Text('Profile'),
+        title: const Text('Profile'),
       ),
       body: Center(
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircleAvatar(
+              const CircleAvatar(
                 radius: 60,
                 backgroundColor: Colors.blue,
                 child: Icon(
@@ -37,12 +37,12 @@ class ProfileScreen extends StatelessWidget {
                   color: Colors.white,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ReadOnlyTextField(label: 'Username', value: username),
               ReadOnlyTextField(label: 'Email', value: email),
               ReadOnlyTextField(label: 'First Name', value: firstName),
               ReadOnlyTextField(label: 'Last Name', value: lastName),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).primaryColor,
@@ -51,11 +51,11 @@ class ProfileScreen extends StatelessWidget {
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
-                      return ChangePasswordDialog();
+                      return const ChangePasswordDialog();
                     },
                   );
                 },
-                child: Text(
+                child: const Text(
                   'Change Password',
                   style: TextStyle(
                     color: Color.fromRGBO(255, 255, 255, 1),

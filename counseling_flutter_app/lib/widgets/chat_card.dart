@@ -17,16 +17,16 @@ class ChatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: ListTile(
-        leading: Icon(
+        leading: const Icon(
             Icons.account_circle_rounded), // Icon or image before the chat name
         title: Text(name),
         onTap: onTap,
         trailing: isDeleting
-            ? CircularProgressIndicator() // Show loading indicator if deleting
+            ? const CircularProgressIndicator() // Show loading indicator if deleting
             : IconButton(
-                icon: Icon(Icons.delete),
+                icon: const Icon(Icons.delete),
                 onPressed: () {
                   _showDeleteConfirmationDialog(context);
                 },
@@ -40,21 +40,21 @@ class ChatCard extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Delete Chat"),
-          content: Text("Are you sure you want to delete this chat?"),
+          title: const Text("Delete Chat"),
+          content: const Text("Are you sure you want to delete this chat?"),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text("Cancel"),
+              child: const Text("Cancel"),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 onDeletePressed();
               },
-              child: Text("Delete"),
+              child: const Text("Delete"),
             ),
           ],
         );

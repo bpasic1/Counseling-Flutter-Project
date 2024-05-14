@@ -12,7 +12,7 @@ class ChatScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chat'),
+        title: const Text('Chat'),
       ),
       body: Column(
         children: [
@@ -110,17 +110,20 @@ class _SendMessageFormState extends State<SendMessageForm> {
           Expanded(
             child: TextField(
               controller: _messageController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Type your message...',
               ),
             ),
           ),
-          SizedBox(width: 8.0),
-          ElevatedButton(
+          const SizedBox(width: 8.0),
+          IconButton(
             onPressed: () {
               _sendMessage();
             },
-            child: Text('Send'),
+            icon: Icon(
+              Icons.send,
+              color: Colors.blue[400],
+            ),
           ),
         ],
       ),

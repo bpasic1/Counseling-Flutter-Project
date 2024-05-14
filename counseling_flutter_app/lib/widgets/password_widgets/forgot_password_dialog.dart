@@ -7,7 +7,7 @@ class ForgotPasswordDialog extends StatefulWidget {
       : super(key: key);
 
   @override
-  _ForgotPasswordDialogState createState() => _ForgotPasswordDialogState();
+  State<ForgotPasswordDialog> createState() => _ForgotPasswordDialogState();
 }
 
 class _ForgotPasswordDialogState extends State<ForgotPasswordDialog> {
@@ -20,7 +20,7 @@ class _ForgotPasswordDialogState extends State<ForgotPasswordDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Forgot Password'),
+      title: const Text('Forgot Password'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -44,7 +44,7 @@ class _ForgotPasswordDialogState extends State<ForgotPasswordDialog> {
           onPressed: () {
             Navigator.pop(context); // Close the dialog
           },
-          child: Text('Cancel'),
+          child: const Text('Cancel'),
         ),
         ElevatedButton(
           onPressed: isLoading
@@ -52,7 +52,7 @@ class _ForgotPasswordDialogState extends State<ForgotPasswordDialog> {
               : () async {
                   // Check if the entered email matches the email format
                   if (!emailRegex.hasMatch(email)) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text('Please enter a valid email.'),
                     ));
                     return;
@@ -73,8 +73,9 @@ class _ForgotPasswordDialogState extends State<ForgotPasswordDialog> {
 
                   Navigator.pop(context); // Close the dialog
                 },
-          child:
-              isLoading ? CircularProgressIndicator() : Text('Reset Password'),
+          child: isLoading
+              ? const CircularProgressIndicator()
+              : const Text('Reset Password'),
         ),
       ],
     );

@@ -20,8 +20,6 @@ class LoginForm extends StatelessWidget {
         password: password,
       );
 
-      print('User signed in: $userCredentials');
-
       navigateBack();
     } on FirebaseAuthException catch (error) {
       ScaffoldMessenger.of(context).clearSnackBars();
@@ -119,7 +117,7 @@ class LoginForm extends StatelessWidget {
           ),
           TextButton(
             onPressed: () => _showForgotPasswordDialog(context),
-            child: Text('Forgot Password?'),
+            child: const Text('Forgot Password?'),
           ),
         ],
       ),

@@ -30,7 +30,7 @@ class MessageBubble extends StatelessWidget {
           return Text('Error: ${snapshot.error}');
         }
         if (!snapshot.hasData) {
-          return Text('User not found');
+          return const Text('User not found');
         }
 
         String username = snapshot.data!['username'];
@@ -48,7 +48,7 @@ class MessageBubble extends StatelessWidget {
                 ),
                 child: Text(
                   username, // Display the username instead of senderId
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
             Row(
@@ -60,12 +60,12 @@ class MessageBubble extends StatelessWidget {
                 if (isExpertMessage) ...[
                   if (displayProfileIcon)
                     // Display the icon to the left of the user/expert you are talking to
-                    Padding(
-                      padding: const EdgeInsets.only(right: 0.0),
+                    const Padding(
+                      padding: EdgeInsets.only(right: 0.0),
                       child: SizedBox(
                         height: 40,
                         child: Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
+                          padding: EdgeInsets.only(left: 8.0),
                           child: Icon(Icons.account_circle_rounded),
                         ),
                       ),
@@ -87,7 +87,7 @@ class MessageBubble extends StatelessWidget {
                           ? Colors.blue[100]
                           : Colors.green[100],
                       child: Padding(
-                        padding: EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(8.0),
                         child: Text(message),
                       ),
                     ),
@@ -96,12 +96,12 @@ class MessageBubble extends StatelessWidget {
                 if (!isExpertMessage) ...[
                   if (displayProfileIcon)
                     // Display the icon to the right of the current user's messages
-                    Padding(
-                      padding: const EdgeInsets.only(left: 0.0),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 0.0),
                       child: SizedBox(
                         height: 40,
                         child: Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
+                          padding: EdgeInsets.only(right: 8.0),
                           child: Icon(Icons.account_circle_rounded),
                         ),
                       ),

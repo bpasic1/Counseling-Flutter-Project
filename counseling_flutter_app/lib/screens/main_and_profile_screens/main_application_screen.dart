@@ -55,11 +55,11 @@ class _MainApplicationScreenState extends State<MainApplicationScreen> {
           stream: userDataStream,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
+              return const CircularProgressIndicator();
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             } else if (!snapshot.hasData || !snapshot.data!.exists) {
-              return Text('User data not found');
+              return const Text('User data not found');
             } else {
               var userData = snapshot.data!.data() as Map<String, dynamic>;
               username = userData['username'] ?? '';
@@ -77,12 +77,12 @@ class _MainApplicationScreenState extends State<MainApplicationScreen> {
                       size: 48,
                       color: Colors.white,
                     ),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Colors.blue,
                     ),
                   ),
                   ListTile(
-                    title: Text('Profile'),
+                    title: const Text('Profile'),
                     onTap: () {
                       Navigator.pop(context);
                       Navigator.push(
@@ -99,13 +99,13 @@ class _MainApplicationScreenState extends State<MainApplicationScreen> {
                     },
                   ),
                   ListTile(
-                    title: Text('Chats'),
+                    title: const Text('Chats'),
                     onTap: () {
                       Navigator.pop(context);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ChatsScreen(),
+                          builder: (context) => const ChatsScreen(),
                         ),
                       );
                     },
@@ -126,7 +126,7 @@ class _MainApplicationScreenState extends State<MainApplicationScreen> {
               height: 200,
             ),
             const SizedBox(height: 20),
-            Text(
+            const Text(
               'Welcome to Advice Haven!',
               style: TextStyle(
                 fontSize: 24,
@@ -134,8 +134,8 @@ class _MainApplicationScreenState extends State<MainApplicationScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
               child: Text(
                 'We are here to provide you with support and guidance '
                 'through your journey!',

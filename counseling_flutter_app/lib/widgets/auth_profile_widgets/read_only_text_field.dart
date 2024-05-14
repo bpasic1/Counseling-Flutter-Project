@@ -21,7 +21,7 @@ class ReadOnlyTextField extends StatelessWidget {
           readOnly: true,
           decoration: InputDecoration(
             labelText: label,
-            prefixIcon: Icon(Icons.person),
+            prefixIcon: const Icon(Icons.person),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20),
             ),

@@ -15,7 +15,7 @@ class SelectExpertScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Select Expert'),
+        title: const Text('Select Expert'),
       ),
       body: ExpertList(selectedExperts: existingChats, refreshUI: refreshUI),
     );
@@ -39,13 +39,13 @@ class ExpertList extends StatelessWidget {
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {
           final experts = snapshot.data!.docs;
           if (experts.isEmpty) {
-            return Center(child: Text('No experts found.'));
+            return const Center(child: Text('No experts found.'));
           }
 
           /* final existingExpertIds = selectedExperts.map((chat) {
@@ -63,7 +63,7 @@ class ExpertList extends StatelessWidget {
               final expertId = experts[index].id;
               if (existingExpertIds.contains(expertId)) {
                 // If the expert is already in the chat list, don't display them
-                return SizedBox.shrink();
+                return const SizedBox.shrink();
               }
               final expertName =
                   '${expertData['firstName']} ${expertData['lastName']}';
