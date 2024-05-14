@@ -33,9 +33,6 @@ class MessageList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String? _previousSenderId;
-    bool _isFirstMessageInRow = true;
-
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('conversations')
@@ -45,7 +42,7 @@ class MessageList extends StatelessWidget {
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {

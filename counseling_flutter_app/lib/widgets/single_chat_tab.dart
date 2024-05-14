@@ -13,11 +13,21 @@ class SingleChatTab extends StatefulWidget {
 }
 
 class _SingleChatTabState extends State<SingleChatTab> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _showFloatingButton = false;
+  bool _isDeleting = false;
+  String _deleteMessage = '';
+
   @override
   void initState() {
     super.initState();
     _fetchUserRole();
+  }
+
+  void refreshUI() {
+    setState(() {
+      _fetchChats();
+    });
   }
 
   Future<void> _fetchUserRole() async {
@@ -39,6 +49,7 @@ class _SingleChatTabState extends State<SingleChatTab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: StreamBuilder<List<Map<String, dynamic>>>(
         stream: _fetchChats(),
         builder: (context, snapshot) {
@@ -63,6 +74,11 @@ class _SingleChatTabState extends State<SingleChatTab> {
                             documentId: chats[index]['document_id'],
                           );
                         },
+                        onDeletePressed: () {
+                          _deleteChat(chats[index]
+                              ['document_id']); // Trigger delete logic here
+                        },
+                        isDeleting: _isDeleting,
                       );
                     },
                   );
@@ -78,23 +94,23 @@ class _SingleChatTabState extends State<SingleChatTab> {
                     chats.map((chat) => chat['name'] as String).toList();
                 final List<String> existingChatIds =
                     chats.map((chat) => chat['id'] as String).toList();
-                print(existingChatIds);
                 final selectedExpert = await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => SelectExpertScreen(
                       //existingChats: existingChats,
                       existingChats: existingChatIds,
+                      refreshUI: refreshUI,
                     ),
                   ),
                 );
                 if (selectedExpert != null) {
-                  _startConversation(
-                    selectedExpertName: selectedExpert['name'],
-                    selectedExpertId: selectedExpert['id'],
+                  /* _startConversation(
+                    //selectedExpertId: selectedExpert['id'],
                     //username: selectedExpert['username'],
                     documentId: selectedExpert['document_id'],
-                  );
+                    //selectedExpertName: selectedExpert['name'],
+                  ); */
                 }
               },
               child: Icon(Icons.add),
@@ -169,7 +185,7 @@ class _SingleChatTabState extends State<SingleChatTab> {
   }
 
   void _startConversation({
-    required String selectedExpertName,
+    String? selectedExpertName,
     String? selectedExpertId,
     required String documentId,
     //required String username,
@@ -185,5 +201,36 @@ class _SingleChatTabState extends State<SingleChatTab> {
         ),
       ),
     );
+  }
+
+  void _deleteChat(String documentId) async {
+    setState(() {
+      _isDeleting = true;
+    });
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('conversations')
+          .doc(documentId)
+          .delete();
+      setState(() {
+        _deleteMessage = 'Chat deleted successfully';
+      });
+    } catch (e) {
+      setState(() {
+        _deleteMessage = 'Failed to delete chat: $e';
+      });
+    } finally {
+      setState(() {
+        _isDeleting = false;
+      });
+
+      // Show snackbar with deletion result
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_deleteMessage),
+        ),
+      );
+    }
   }
 }

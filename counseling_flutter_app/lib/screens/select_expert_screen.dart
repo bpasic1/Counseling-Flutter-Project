@@ -5,8 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class SelectExpertScreen extends StatelessWidget {
   final List<String> existingChats;
+  final Function refreshUI;
 
-  const SelectExpertScreen({Key? key, required this.existingChats})
+  const SelectExpertScreen(
+      {Key? key, required this.existingChats, required this.refreshUI})
       : super(key: key);
 
   @override
@@ -15,15 +17,18 @@ class SelectExpertScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Select Expert'),
       ),
-      body: ExpertList(selectedExperts: existingChats),
+      body: ExpertList(selectedExperts: existingChats, refreshUI: refreshUI),
     );
   }
 }
 
 class ExpertList extends StatelessWidget {
   final List<String> selectedExperts;
+  final Function refreshUI;
 
-  const ExpertList({Key? key, required this.selectedExperts}) : super(key: key);
+  const ExpertList(
+      {Key? key, required this.selectedExperts, required this.refreshUI})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +77,7 @@ class ExpertList extends StatelessWidget {
                     await FirestoreService()
                         .startConversation(userId, expertId);
                     Navigator.pop(context, expertName);
+                    refreshUI();
                   } else {
                     // Handle the case where the user is not logged in
                     print('User not logged in');
