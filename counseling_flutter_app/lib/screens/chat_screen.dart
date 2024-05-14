@@ -60,15 +60,29 @@ class MessageList extends StatelessWidget {
               final senderId = messageData['senderId'];
               final isExpertMessage =
                   senderId != FirebaseAuth.instance.currentUser!.uid;
-              final isFirstMessageInRow =
-                  _isFirstMessageInRow || senderId != _previousSenderId;
-              _previousSenderId = senderId;
-              _isFirstMessageInRow = isFirstMessageInRow;
+
+              // Check if this message is the last or it's from a different sender
+              final bool isFirstMessage = index == messages.length - 1 ||
+                  messageData['senderId'] !=
+                      (messages[index + 1].data()
+                          as Map<String, dynamic>)['senderId'];
+
+              final bool isLastMessage = index == 0 ||
+                  messageData['senderId'] !=
+                      (messages[index - 1].data()
+                          as Map<String, dynamic>)['senderId'];
+
+              final bool isNewUser = index > 0 &&
+                  messageData['senderId'] !=
+                      (messages[index - 1].data()
+                          as Map<String, dynamic>)['senderId'];
+
               return MessageBubble(
                 message: message,
                 senderId: senderId,
                 isExpertMessage: isExpertMessage,
-                isFirstMessageInRow: isFirstMessageInRow,
+                isFirstMessageInRow: isFirstMessage,
+                displayProfileIcon: isLastMessage || isNewUser,
               );
             },
           );

@@ -13,6 +13,29 @@ class SingleChatTab extends StatefulWidget {
 }
 
 class _SingleChatTabState extends State<SingleChatTab> {
+  bool _showFloatingButton = false;
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserRole();
+  }
+
+  Future<void> _fetchUserRole() async {
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    final currentUser = _auth.currentUser;
+    if (currentUser != null) {
+      final userId = currentUser.uid;
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+      final userRole = userDoc.get('role');
+      setState(() {
+        _showFloatingButton = userRole == 'user';
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +58,7 @@ class _SingleChatTabState extends State<SingleChatTab> {
                         onTap: () {
                           _startConversation(
                             selectedExpertName: chats[index]['name'],
-                            username: chats[index]['username'],
+                            //username: chats[index]['username'],
                             //chats[index]['id'],
                             documentId: chats[index]['document_id'],
                           );
@@ -46,34 +69,37 @@ class _SingleChatTabState extends State<SingleChatTab> {
           }
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final List<Map<String, dynamic>> chats = await _fetchChats().first;
-          final List<String> existingChats =
-              chats.map((chat) => chat['name'] as String).toList();
-          final List<String> existingChatIds =
-              chats.map((chat) => chat['id'] as String).toList();
-          print(existingChatIds);
-          final selectedExpert = await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => SelectExpertScreen(
-                //existingChats: existingChats,
-                existingChats: existingChatIds,
-              ),
-            ),
-          );
-          if (selectedExpert != null) {
-            _startConversation(
-              selectedExpertName: selectedExpert['name'],
-              selectedExpertId: selectedExpert['id'],
-              username: selectedExpert['username'],
-              documentId: selectedExpert['document_id'],
-            );
-          }
-        },
-        child: Icon(Icons.add),
-      ),
+      floatingActionButton: _showFloatingButton
+          ? FloatingActionButton(
+              onPressed: () async {
+                final List<Map<String, dynamic>> chats =
+                    await _fetchChats().first;
+                final List<String> existingChats =
+                    chats.map((chat) => chat['name'] as String).toList();
+                final List<String> existingChatIds =
+                    chats.map((chat) => chat['id'] as String).toList();
+                print(existingChatIds);
+                final selectedExpert = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SelectExpertScreen(
+                      //existingChats: existingChats,
+                      existingChats: existingChatIds,
+                    ),
+                  ),
+                );
+                if (selectedExpert != null) {
+                  _startConversation(
+                    selectedExpertName: selectedExpert['name'],
+                    selectedExpertId: selectedExpert['id'],
+                    //username: selectedExpert['username'],
+                    documentId: selectedExpert['document_id'],
+                  );
+                }
+              },
+              child: Icon(Icons.add),
+            )
+          : null,
     );
   }
 
@@ -146,7 +172,7 @@ class _SingleChatTabState extends State<SingleChatTab> {
     required String selectedExpertName,
     String? selectedExpertId,
     required String documentId,
-    required String username,
+    //required String username,
   }) async {
     // Navigate to the chat screen
     await Navigator.push(
