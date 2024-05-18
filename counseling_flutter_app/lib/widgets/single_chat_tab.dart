@@ -1,3 +1,4 @@
+import 'package:counseling_flutter_app/screens/select_category_screen.dart';
 import 'package:counseling_flutter_app/widgets/chat_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -92,7 +93,27 @@ class _SingleChatTabState extends State<SingleChatTab> {
                     await _fetchChats().first;
                 final List<String> existingChatIds =
                     chats.map((chat) => chat['id'] as String).toList();
-                final selectedExpert = await Navigator.push(
+
+                final selectedCategory = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SelectCategoryScreen(),
+                  ),
+                );
+
+                if (selectedCategory != null) {
+                  final selectedExpert = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SelectExpertScreen(
+                        category: selectedCategory,
+                        existingChats: existingChatIds,
+                        refreshUI: refreshUI,
+                      ),
+                    ),
+                  );
+
+                  /* final selectedExpert = await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => SelectExpertScreen(
@@ -101,14 +122,15 @@ class _SingleChatTabState extends State<SingleChatTab> {
                       refreshUI: refreshUI,
                     ),
                   ),
-                );
-                if (selectedExpert != null) {
-                  /* _startConversation(
+                ); */
+                  if (selectedExpert != null) {
+                    /* _startConversation(
                     //selectedExpertId: selectedExpert['id'],
                     //username: selectedExpert['username'],
                     documentId: selectedExpert['document_id'],
                     //selectedExpertName: selectedExpert['name'],
                   ); */
+                  }
                 }
               },
               child: const Icon(Icons.add),

@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:counseling_flutter_app/screens/become_expert_screen.dart';
 import 'package:counseling_flutter_app/screens/chats_screen.dart';
 import 'package:counseling_flutter_app/screens/main_and_profile_screens/profile_screen.dart';
+import 'package:counseling_flutter_app/screens/request_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -19,6 +21,7 @@ class _MainApplicationScreenState extends State<MainApplicationScreen> {
   late String email = '';
   late String firstName = '';
   late String lastName = '';
+  late String role = '';
   bool isLoading = true;
 
   late Stream<DocumentSnapshot> userDataStream;
@@ -66,6 +69,7 @@ class _MainApplicationScreenState extends State<MainApplicationScreen> {
               email = userData['email'];
               firstName = userData['firstName'];
               lastName = userData['lastName'];
+              role = userData['role'] ?? 'user';
               return ListView(
                 padding: EdgeInsets.zero,
                 children: [
@@ -98,18 +102,48 @@ class _MainApplicationScreenState extends State<MainApplicationScreen> {
                       );
                     },
                   ),
-                  ListTile(
-                    title: const Text('Chats'),
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ChatsScreen(),
-                        ),
-                      );
-                    },
-                  ),
+                  if (role == 'user' || role == 'expert') ...[
+                    ListTile(
+                      title: const Text('Chats'),
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ChatsScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                  if (role == 'user') ...[
+                    ListTile(
+                      title: const Text('Become an Expert'),
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const BecomeExpertScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                  if (role == 'administrator') ...[
+                    ListTile(
+                      title: const Text('Requests'),
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const RequestsScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ],
               );
             }

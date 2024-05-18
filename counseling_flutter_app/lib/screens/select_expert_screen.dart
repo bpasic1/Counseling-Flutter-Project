@@ -4,11 +4,15 @@ import 'package:counseling_flutter_app/service/firestore_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class SelectExpertScreen extends StatelessWidget {
+  final String category;
   final List<String> existingChats;
   final Function refreshUI;
 
   const SelectExpertScreen(
-      {Key? key, required this.existingChats, required this.refreshUI})
+      {Key? key,
+      required this.category,
+      required this.existingChats,
+      required this.refreshUI})
       : super(key: key);
 
   @override
@@ -17,17 +21,24 @@ class SelectExpertScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Select Expert'),
       ),
-      body: ExpertList(selectedExperts: existingChats, refreshUI: refreshUI),
+      body: ExpertList(
+          category: category,
+          selectedExperts: existingChats,
+          refreshUI: refreshUI),
     );
   }
 }
 
 class ExpertList extends StatelessWidget {
+  final String category;
   final List<String> selectedExperts;
   final Function refreshUI;
 
   const ExpertList(
-      {Key? key, required this.selectedExperts, required this.refreshUI})
+      {Key? key,
+      required this.category,
+      required this.selectedExperts,
+      required this.refreshUI})
       : super(key: key);
 
   @override
@@ -36,6 +47,7 @@ class ExpertList extends StatelessWidget {
       stream: FirebaseFirestore.instance
           .collection('users')
           .where('role', isEqualTo: 'expert')
+          .where('category', isEqualTo: category.toLowerCase())
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {

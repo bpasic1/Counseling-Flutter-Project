@@ -106,3 +106,19 @@ exports.forgotPassword = functions.https.onRequest(async (req, res) => {
         res.status(500).send('Error resetting password.');
     }
 });
+
+
+exports.sendExpertRequestNotification = functions.firestore
+.document('expertRequests/{requestId}')
+.onCreate((snap, context) => {
+    const request = snap.data();
+    const payload = {
+      notification: {
+        title: 'New Expert Request',
+        body: 'A new request to become an expert has been submitted.',
+        clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+      },
+    };
+
+    return admin.messaging().sendToTopic('admin', payload);
+  });
