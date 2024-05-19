@@ -179,3 +179,65 @@ const getAccessToken = () => {
       console.log('No administrator tokens found');
     }
   });
+
+  
+
+  exports.sendMessageNotification = functions.firestore
+  .document('conversations/{conversationId}/messages/{messageId}')
+  .onCreate(async (snap, context) => {
+    const messageData = snap.data();
+    const conversationId = context.params.conversationId;
+
+    // Fetch conversation details
+    const conversationDoc = await admin.firestore().collection('conversations').doc(conversationId).get();
+    if (!conversationDoc.exists) {
+      console.log('Conversation does not exist:', conversationId);
+      return;
+    }
+
+    const conversation = conversationDoc.data();
+    const senderId = messageData.senderId;
+    const recipientId = senderId === conversation.user_id ? conversation.expert_id : conversation.user_id;
+
+    // Fetch recipient's FCM token
+    const recipientDoc = await admin.firestore().collection('users').doc(recipientId).get();
+    if (!recipientDoc.exists) {
+      console.log('Recipient does not exist:', recipientId);
+      return;
+    }
+
+    const recipientData = recipientDoc.data();
+    const fcmToken = recipientData.fcmToken;
+
+    if (!fcmToken) {
+      console.log('Recipient does not have an FCM token:', recipientId);
+      return;
+    }
+
+    const payload = {
+      message: {
+        token: fcmToken,
+        notification: {
+          title: 'New Message',
+          body: messageData.message,
+        },
+      },
+    };
+
+    try {
+      const accessToken = await getAccessToken();
+      const response = await axios.post(
+        `https://fcm.googleapis.com/v1/projects/${serviceAccount.project_id}/messages:send`,
+        { message: payload.message },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      console.log('Notification sent successfully:', response.data);
+    } catch (error) {
+      console.error('Error sending notification:', error.response ? error.response.data : error.message);
+    }
+  });

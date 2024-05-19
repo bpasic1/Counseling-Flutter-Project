@@ -67,7 +67,10 @@ class _MainApplicationScreenState extends State<MainApplicationScreen> {
           .get();
       if (userDoc.exists) {
         Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
-        if (userData['role'] == 'administrator') {
+        //if (userData['role'] == 'administrator') {
+        if (userData['role'] == 'user' ||
+            userData['role'] == 'expert' ||
+            userData['role'] == 'administrator') {
           await FirebaseFirestore.instance
               .collection('users')
               .doc(user.uid)

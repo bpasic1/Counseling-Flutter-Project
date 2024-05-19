@@ -2,12 +2,52 @@ import 'package:counseling_flutter_app/widgets/message_chat_bubble.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
-class ChatScreen extends StatelessWidget {
+class ChatScreen extends StatefulWidget {
   final String chatId;
 
   const ChatScreen({super.key, required this.chatId});
 
+  @override
+  State<ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
+  /* @override
+  void initState() {
+    super.initState();
+    _saveFcmToken();
+    _configureFcm();
+  }
+
+  void _saveFcmToken() async {
+    String? token = await FirebaseMessaging.instance.getToken();
+    if (token != null) {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .update({
+          'fcmToken': token,
+        });
+      }
+    }
+  }
+
+  void _configureFcm() {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('Message received: ${message.messageId}');
+      // Handle foreground message
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('Message clicked!');
+      // Handle notification tapped logic here
+    });
+  }
+ */
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,9 +57,9 @@ class ChatScreen extends StatelessWidget {
       body: Column(
         children: [
           Expanded(
-            child: MessageList(chatId: chatId),
+            child: MessageList(chatId: widget.chatId),
           ),
-          SendMessageForm(chatId: chatId),
+          SendMessageForm(chatId: widget.chatId),
         ],
       ),
     );
