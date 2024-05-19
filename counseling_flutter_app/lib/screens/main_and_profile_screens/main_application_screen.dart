@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:counseling_flutter_app/screens/become_expert_screen.dart';
 import 'package:counseling_flutter_app/screens/chats_screen.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:counseling_flutter_app/screens/main_and_profile_screens/profile_screen.dart';
 import 'package:counseling_flutter_app/screens/request_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -33,6 +34,61 @@ class _MainApplicationScreenState extends State<MainApplicationScreen> {
     String? userId = user?.uid;
     userDataStream =
         FirebaseFirestore.instance.collection('users').doc(userId).snapshots();
+
+    requestNotificationPermissions();
+  }
+
+  void requestNotificationPermissions() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('User granted permission');
+      String? token = await messaging.getToken();
+      if (token != null) {
+        await saveTokenToDatabase(token);
+      }
+    } else {
+      print('User declined or has not accepted permission');
+    }
+  }
+
+  Future<void> saveTokenToDatabase(String token) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      if (userDoc.exists) {
+        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+        if (userData['role'] == 'administrator') {
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .update({
+            'fcmToken': token,
+          });
+        }
+      }
+    }
+  }
+
+  Future<void> removeTokenFromDatabase() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .update({
+        'fcmToken': FieldValue.delete(),
+      });
+    }
   }
 
   @override
@@ -43,8 +99,9 @@ class _MainApplicationScreenState extends State<MainApplicationScreen> {
         title: const Text('Advice Haven'),
         actions: [
           IconButton(
-            onPressed: () {
-              FirebaseAuth.instance.signOut();
+            onPressed: () async {
+              await removeTokenFromDatabase();
+              await FirebaseAuth.instance.signOut();
             },
             icon: Icon(
               Icons.exit_to_app,

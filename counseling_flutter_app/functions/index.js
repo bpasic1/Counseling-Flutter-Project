@@ -1,7 +1,16 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const sgMail = require('@sendgrid/mail');
-admin.initializeApp();
+const axios = require('axios');
+const { google } = require('googleapis');
+const serviceAccount = require('./serviceAccountKey.json');
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+
+const MESSAGING_SCOPE = 'https://www.googleapis.com/auth/firebase.messaging';
+const SCOPES = [MESSAGING_SCOPE];
 
 exports.createUsername = functions.auth.user().onCreate(async (user) => {
   const uid = user.uid; // Get the user ID
@@ -108,17 +117,65 @@ exports.forgotPassword = functions.https.onRequest(async (req, res) => {
 });
 
 
-exports.sendExpertRequestNotification = functions.firestore
-.document('expertRequests/{requestId}')
-.onCreate((snap, context) => {
-    const request = snap.data();
-    const payload = {
-      notification: {
-        title: 'New Expert Request',
-        body: 'A new request to become an expert has been submitted.',
-        clickAction: 'FLUTTER_NOTIFICATION_CLICK',
-      },
-    };
+const getAccessToken = () => {
+    return new Promise(function(resolve, reject) {
+      const jwtClient = new google.auth.JWT(
+        serviceAccount.client_email,
+        null,
+        serviceAccount.private_key,
+        SCOPES,
+        null
+      );
+      jwtClient.authorize(function(err, tokens) {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(tokens.access_token);
+      });
+    });
+  };
 
-    return admin.messaging().sendToTopic('admin', payload);
+  
+  exports.sendExpertRequestNotification = functions.firestore
+  .document('expertRequests/{requestId}')
+  .onCreate(async (snap, context) => {
+    const request = snap.data();
+
+    // Fetch FCM tokens of administrators
+    const adminUsers = await admin.firestore().collection('users').where('role', '==', 'administrator').get();
+    const tokens = adminUsers.docs.map(doc => doc.data().fcmToken).filter(token => !!token);
+
+    if (tokens.length > 0) {
+      const payload = {
+        message: {
+          notification: {
+            title: 'New Expert Request',
+            body: 'A new request to become an expert has been submitted.',
+          },
+        }
+      };
+
+      try {
+        const accessToken = await getAccessToken();
+        for (const token of tokens) {
+          payload.message.token = token;
+          const response = await axios.post(
+            'https://fcm.googleapis.com/v1/projects/bpasic1-firebase-msc/messages:send',
+            { message: payload.message },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
+          console.log('Notification sent successfully:', response.data);
+        }
+      } catch (error) {
+        console.error('Error sending notification:', error.response ? error.response.data : error.message);
+      }
+    } else {
+      console.log('No administrator tokens found');
+    }
   });
