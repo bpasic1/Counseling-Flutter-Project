@@ -198,7 +198,7 @@ class _MainApplicationScreenState extends State<MainApplicationScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const RequestsScreen(),
+                            builder: (context) => RequestsScreen(),
                           ),
                         );
                       },
