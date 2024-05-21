@@ -47,7 +47,7 @@ class ExpertList extends StatelessWidget {
       stream: FirebaseFirestore.instance
           .collection('users')
           .where('role', isEqualTo: 'expert')
-          .where('category', isEqualTo: category.toLowerCase())
+          .where('category', isEqualTo: category)
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {

@@ -147,6 +147,8 @@ class RequestsScreen extends StatelessWidget {
                                     category: category,
                                     categoryColor: categoryColor,
                                     categoryIcon: categoryIcon,
+                                    requestId: request.id,
+                                    userId: userId,
                                   ),
                                 ),
                               );

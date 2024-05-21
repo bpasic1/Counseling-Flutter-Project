@@ -241,3 +241,23 @@ const getAccessToken = () => {
       console.error('Error sending notification:', error.response ? error.response.data : error.message);
     }
   });
+
+
+  exports.notifyUserOnRequestCancellation = functions.firestore
+    .document('expertRequests/{requestId}')
+    .onDelete(async (snap, context) => {
+        const userId = snap.data().userId;
+        const payload = {
+            notification: {
+                title: 'Request Canceled',
+                body: 'Your request to become an expert has been canceled.',
+            },
+        };
+
+        const userDoc = await admin.firestore().collection('users').doc(userId).get();
+        const token = userDoc.data().fcmToken;
+
+        if (token) {
+            await admin.messaging().sendToDevice(token, payload);
+        }
+    });

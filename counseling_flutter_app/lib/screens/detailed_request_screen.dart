@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class DetailedRequestScreen extends StatelessWidget {
   final String userName;
@@ -7,6 +10,8 @@ class DetailedRequestScreen extends StatelessWidget {
   final String category;
   final Color categoryColor;
   final IconData categoryIcon;
+  final String requestId;
+  final String userId;
 
   const DetailedRequestScreen({
     Key? key,
@@ -16,7 +21,53 @@ class DetailedRequestScreen extends StatelessWidget {
     required this.category,
     required this.categoryColor,
     required this.categoryIcon,
+    required this.requestId,
+    required this.userId,
   }) : super(key: key);
+
+  Future<void> _approveRequest(BuildContext context) async {
+    try {
+      User? adminUser = FirebaseAuth.instance.currentUser;
+      if (adminUser == null) {
+        throw Exception('No authenticated administrator');
+      }
+
+      DocumentSnapshot adminDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(adminUser.uid)
+          .get();
+      if (!adminDoc.exists || adminDoc['role'] != 'administrator') {
+        throw Exception('Authenticated user is not an administrator');
+      }
+
+      await FirebaseFirestore.instance.collection('users').doc(userId).update({
+        'role': 'expert',
+        'category': category,
+      });
+
+      QuerySnapshot conversationSnapshot = await FirebaseFirestore.instance
+          .collection('conversations')
+          .where('user_id', isEqualTo: userId)
+          .get();
+
+      for (var doc in conversationSnapshot.docs) {
+        await doc.reference.delete();
+      }
+
+      await FirebaseFirestore.instance
+          .collection('expertRequests')
+          .doc(requestId)
+          .delete();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User has been promoted to expert')),
+      );
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to promote user: $error')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +131,7 @@ class DetailedRequestScreen extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     // Implement approve functionality
+                    _approveRequest(context);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
@@ -95,8 +147,18 @@ class DetailedRequestScreen extends StatelessWidget {
                       style: TextStyle(color: Colors.white)),
                 ),
                 ElevatedButton(
-                  onPressed: () {
-                    // Implement cancel functionality
+                  onPressed: () async {
+                    await FirebaseFirestore.instance
+                        .collection('expertRequests')
+                        .doc(requestId)
+                        .delete();
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Request has been canceled')),
+                    );
+
+                    Navigator.of(context).pop();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
