@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 import 'package:counseling_flutter_app/screens/main_and_profile_screens/welcome_screen.dart';
 
@@ -13,6 +15,14 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await FirebaseAppCheck.instance.activate(
+    androidProvider: AndroidProvider.debug,
+  );
+
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
+  await analytics.logEvent(name: 'app_opened');
+
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(const MyApp());
 }
@@ -25,10 +35,15 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorObservers: [
+        FirebaseAnalyticsObserver(analytics: analytics),
+      ],
       title: 'Counsle project',
       theme: ThemeData.light().copyWith(
         colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.lightBlue),

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 class ChatScreen extends StatefulWidget {
   final String chatId;
@@ -184,6 +185,15 @@ class _SendMessageFormState extends State<SendMessageForm> {
         'senderId': senderId,
         'timestamp': timestamp,
       });
+
+      FirebaseAnalytics.instance.logEvent(
+        name: 'message_sent',
+        parameters: {
+          'message_length': message.length,
+          'timestamp': DateTime.now().millisecondsSinceEpoch,
+        },
+      );
+
       _messageController.clear();
     }
   }
