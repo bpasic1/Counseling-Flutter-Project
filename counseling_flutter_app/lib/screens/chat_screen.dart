@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class ChatScreen extends StatefulWidget {
   final String chatId;
@@ -15,45 +18,41 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  /* @override
+  String? chatPartnerName;
+
+  @override
   void initState() {
     super.initState();
-    _saveFcmToken();
-    _configureFcm();
+    _getChatPartnerName();
   }
 
-  void _saveFcmToken() async {
-    String? token = await FirebaseMessaging.instance.getToken();
-    if (token != null) {
-      User? user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .update({
-          'fcmToken': token,
-        });
-      }
-    }
-  }
+  Future<void> _getChatPartnerName() async {
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    final conversationDoc = await FirebaseFirestore.instance
+        .collection('conversations')
+        .doc(widget.chatId)
+        .get();
 
-  void _configureFcm() {
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Message received: ${message.messageId}');
-      // Handle foreground message
-    });
+    final expertId = conversationDoc['expert_id'];
+    final userId = conversationDoc['user_id'];
 
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('Message clicked!');
-      // Handle notification tapped logic here
+    final chatPartnerId = uid == expertId ? userId : expertId;
+
+    final chatPartnerDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(chatPartnerId)
+        .get();
+
+    setState(() {
+      chatPartnerName = chatPartnerDoc['username'];
     });
   }
- */
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chat'),
+        title: Text(chatPartnerName ?? 'Chat'),
       ),
       body: Column(
         children: [
@@ -94,7 +93,8 @@ class MessageList extends StatelessWidget {
             itemBuilder: (context, index) {
               final messageData =
                   messages[index].data() as Map<String, dynamic>;
-              final message = messageData['message'];
+              final message = messageData['message'] ?? '';
+              final imageUrl = messageData['imageUrl'];
               final senderId = messageData['senderId'];
               final isExpertMessage =
                   senderId != FirebaseAuth.instance.currentUser!.uid;
@@ -117,6 +117,7 @@ class MessageList extends StatelessWidget {
 
               return MessageBubble(
                 message: message,
+                imageUrl: imageUrl,
                 senderId: senderId,
                 isExpertMessage: isExpertMessage,
                 isFirstMessageInRow: isFirstMessage,
@@ -142,12 +143,70 @@ class SendMessageForm extends StatefulWidget {
 class _SendMessageFormState extends State<SendMessageForm> {
   final TextEditingController _messageController = TextEditingController();
 
+  Future<void> _sendImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      File file = File(image.path);
+
+      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+
+      final uid = FirebaseAuth.instance.currentUser!.uid;
+
+      try {
+        DocumentSnapshot userDoc =
+            await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+        String username = userDoc['username'] ?? 'user';
+        String imageFileName = '${username}_$fileName';
+
+        TaskSnapshot snapshot = await FirebaseStorage.instance
+            .ref('chat_images/$imageFileName')
+            .putFile(file);
+
+        String downloadUrl = await snapshot.ref.getDownloadURL();
+
+        // Send the image URL in the message
+        final senderId = FirebaseAuth.instance.currentUser!.uid;
+        final timestamp = DateTime.now();
+        FirebaseFirestore.instance
+            .collection('conversations')
+            .doc(widget.chatId)
+            .collection('messages')
+            .add({
+          'imageUrl': downloadUrl,
+          'senderId': senderId,
+          'timestamp': timestamp,
+        });
+
+        // Log the event for analytics
+        FirebaseAnalytics.instance.logEvent(
+          name: 'image_sent',
+          parameters: {
+            'image_url': downloadUrl,
+            'timestamp': DateTime.now().millisecondsSinceEpoch,
+          },
+        );
+      } catch (e) {
+        print('Error uploading image: $e');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
         children: [
+          IconButton(
+            onPressed: _sendImage,
+            icon: Icon(
+              Icons.image,
+              color: Colors.blue[400],
+            ),
+          ),
           Expanded(
             child: TextField(
               controller: _messageController,

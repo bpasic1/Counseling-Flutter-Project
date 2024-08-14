@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MessageBubble extends StatelessWidget {
   final String message;
+  final String? imageUrl;
   final String senderId;
   final bool isExpertMessage;
   final bool isFirstMessageInRow;
@@ -11,6 +12,7 @@ class MessageBubble extends StatelessWidget {
   const MessageBubble({
     Key? key,
     required this.message,
+    this.imageUrl,
     required this.senderId,
     required this.isExpertMessage,
     required this.isFirstMessageInRow,
@@ -59,7 +61,6 @@ class MessageBubble extends StatelessWidget {
               children: [
                 if (isExpertMessage) ...[
                   if (displayProfileIcon)
-                    // Display the icon to the left of the user/expert you are talking to
                     const Padding(
                       padding: EdgeInsets.only(right: 0.0),
                       child: SizedBox(
@@ -88,7 +89,18 @@ class MessageBubble extends StatelessWidget {
                           : Colors.green[100],
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(message),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (imageUrl != null) // Show image if exists
+                              Image.network(
+                                imageUrl!,
+                                width: 200, // Adjust size as needed
+                                fit: BoxFit.cover,
+                              ),
+                            if (message.isNotEmpty) Text(message),
+                          ],
+                        ),
                       ),
                     ),
                   ),
