@@ -137,7 +137,7 @@ class _MainApplicationScreenState extends State<MainApplicationScreen> {
                     accountName: Text(username),
                     accountEmail: Text(email),
                     currentAccountPicture: const Icon(
-                      Icons.person,
+                      Icons.account_circle,
                       size: 48,
                       color: Colors.white,
                     ),

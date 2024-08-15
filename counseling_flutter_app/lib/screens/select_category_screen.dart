@@ -45,7 +45,7 @@ class SelectCategoryScreen extends StatelessWidget {
                       color: Colors.white, fontWeight: FontWeight.bold),
                 ),
                 onTap: () {
-                  Navigator.pop(context, category['name']);
+                  Navigator.pop(context, category);
                 },
               ),
             ),

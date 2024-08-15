@@ -94,7 +94,8 @@ class _SingleChatTabState extends State<SingleChatTab> {
                 final List<String> existingChatIds =
                     chats.map((chat) => chat['id'] as String).toList();
 
-                final selectedCategory = await Navigator.push(
+                final Map<String, dynamic>? selectedCategory =
+                    await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => SelectCategoryScreen(),
@@ -102,27 +103,26 @@ class _SingleChatTabState extends State<SingleChatTab> {
                 );
 
                 if (selectedCategory != null) {
+                  final String categoryName =
+                      selectedCategory['name'] as String;
+                  final Color categoryColor =
+                      selectedCategory['color'] as Color;
+                  final IconData categoryIcon =
+                      selectedCategory['icon'] as IconData;
+
                   final selectedExpert = await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => SelectExpertScreen(
-                        category: selectedCategory,
+                        category: categoryName,
+                        categoryColor: categoryColor,
+                        categoryIcon: categoryIcon,
                         existingChats: existingChatIds,
                         refreshUI: refreshUI,
                       ),
                     ),
                   );
 
-                  /* final selectedExpert = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SelectExpertScreen(
-                      //existingChats: existingChats,
-                      existingChats: existingChatIds,
-                      refreshUI: refreshUI,
-                    ),
-                  ),
-                ); */
                   if (selectedExpert != null) {
                     /* _startConversation(
                     //selectedExpertId: selectedExpert['id'],

@@ -40,27 +40,75 @@ class DetailedRequestScreen extends StatelessWidget {
         throw Exception('Authenticated user is not an administrator');
       }
 
-      await FirebaseFirestore.instance.collection('users').doc(userId).update({
-        'role': 'expert',
-        'category': category,
-      });
+      // Show dialog for entering expertise information
+      String expertiseInfo = '';
+      showDialog(
+        context: context,
+        builder: (BuildContext dialogContext) {
+          return AlertDialog(
+            backgroundColor: Colors.white, // Customize background color
+            title: const Text('Enter Expertise Information'),
+            content: TextField(
+              onChanged: (value) {
+                expertiseInfo = value;
+              },
+              decoration: const InputDecoration(
+                hintText: 'Expertise Information',
+                border: OutlineInputBorder(), // Add border to the TextField
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: const Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(dialogContext).pop(); // Close the dialog
+                },
+              ),
+              TextButton(
+                child: const Text('Submit'),
+                onPressed: () async {
+                  // Update user role and category
+                  await FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(userId)
+                      .update({
+                    'role': 'expert',
+                    'category': category,
+                    'information': expertiseInfo, // Add expertise info
+                  });
 
-      QuerySnapshot conversationSnapshot = await FirebaseFirestore.instance
-          .collection('conversations')
-          .where('user_id', isEqualTo: userId)
-          .get();
+                  // Delete existing conversations for the user
+                  QuerySnapshot conversationSnapshot = await FirebaseFirestore
+                      .instance
+                      .collection('conversations')
+                      .where('user_id', isEqualTo: userId)
+                      .get();
 
-      for (var doc in conversationSnapshot.docs) {
-        await doc.reference.delete();
-      }
+                  for (var doc in conversationSnapshot.docs) {
+                    await doc.reference.delete();
+                  }
 
-      await FirebaseFirestore.instance
-          .collection('expertRequests')
-          .doc(requestId)
-          .delete();
+                  // Delete the request
+                  await FirebaseFirestore.instance
+                      .collection('expertRequests')
+                      .doc(requestId)
+                      .delete();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('User has been promoted to expert')),
+                  // Show the snackbar
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('User has been promoted to expert')),
+                  );
+
+                  // Close the dialog and the DetailedRequestScreen
+                  Navigator.of(dialogContext).pop(); // Close the dialog
+                  Navigator.of(context)
+                      .pop(); // Close the DetailedRequestScreen
+                },
+              ),
+            ],
+          );
+        },
       );
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
