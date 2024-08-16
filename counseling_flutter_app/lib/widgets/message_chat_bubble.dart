@@ -87,10 +87,21 @@ class MessageBubble extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             if (imageUrl != null)
-                              Image.network(
-                                imageUrl!,
-                                width: 200,
-                                fit: BoxFit.cover,
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ImageViewerScreen(
+                                          imageUrl: imageUrl!),
+                                    ),
+                                  );
+                                },
+                                child: Image.network(
+                                  imageUrl!,
+                                  width: 200,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             if (message.isNotEmpty) Text(message),
                           ],
@@ -120,6 +131,38 @@ class MessageBubble extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+}
+
+class ImageViewerScreen extends StatelessWidget {
+  final String imageUrl;
+
+  const ImageViewerScreen({Key? key, required this.imageUrl}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          Center(
+            child: InteractiveViewer(
+              child: Image.network(imageUrl),
+            ),
+          ),
+          Positioned(
+            top: 30,
+            left: 10,
+            child: IconButton(
+              icon: const Icon(Icons.close, color: Colors.white, size: 30),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

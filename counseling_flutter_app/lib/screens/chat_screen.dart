@@ -57,11 +57,11 @@ class _ChatScreenState extends State<ChatScreen> {
         title: Row(
           children: [
             const CircleAvatar(
-              radius: 18, // Adjust size if needed
-              backgroundColor: Colors.grey, // You can customize the color
+              radius: 18,
+              backgroundColor: Colors.grey,
               child: Icon(Icons.person, color: Colors.white),
             ),
-            const SizedBox(width: 8), // Reduce the space here
+            const SizedBox(width: 8),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
