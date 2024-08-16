@@ -48,10 +48,6 @@ class MessageBubble extends StatelessWidget {
                   vertical: 4,
                   horizontal: 8,
                 ),
-                child: Text(
-                  username, // Display the username instead of senderId
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
               ),
             Row(
               mainAxisAlignment: isExpertMessage
@@ -67,7 +63,10 @@ class MessageBubble extends StatelessWidget {
                         height: 40,
                         child: Padding(
                           padding: EdgeInsets.only(left: 8.0),
-                          child: Icon(Icons.account_circle_rounded),
+                          child: Icon(
+                            Icons.account_circle_rounded,
+                            color: Colors.blue,
+                          ),
                         ),
                       ),
                     ),
@@ -76,26 +75,21 @@ class MessageBubble extends StatelessWidget {
                   child: Container(
                     margin: EdgeInsets.symmetric(
                       horizontal: isExpertMessage
-                          ? (displayProfileIcon
-                              ? 0.0
-                              : 32.0) // Expert with or without icon
-                          : (displayProfileIcon
-                              ? 0.0
-                              : 32.0), // Non-expert with or without icon
+                          ? (displayProfileIcon ? 0.0 : 32.0)
+                          : (displayProfileIcon ? 0.0 : 32.0),
                     ),
                     child: Card(
-                      color: isExpertMessage
-                          ? Colors.blue[100]
-                          : Colors.green[100],
+                      color:
+                          isExpertMessage ? Colors.blue[100] : Colors.grey[200],
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if (imageUrl != null) // Show image if exists
+                            if (imageUrl != null)
                               Image.network(
                                 imageUrl!,
-                                width: 200, // Adjust size as needed
+                                width: 200,
                                 fit: BoxFit.cover,
                               ),
                             if (message.isNotEmpty) Text(message),
@@ -107,14 +101,16 @@ class MessageBubble extends StatelessWidget {
                 ),
                 if (!isExpertMessage) ...[
                   if (displayProfileIcon)
-                    // Display the icon to the right of the current user's messages
                     const Padding(
                       padding: EdgeInsets.only(left: 0.0),
                       child: SizedBox(
                         height: 40,
                         child: Padding(
                           padding: EdgeInsets.only(right: 8.0),
-                          child: Icon(Icons.account_circle_rounded),
+                          child: Icon(
+                            Icons.account_circle_rounded,
+                            color: Colors.grey,
+                          ),
                         ),
                       ),
                     ),

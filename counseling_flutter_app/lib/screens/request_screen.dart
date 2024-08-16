@@ -23,7 +23,7 @@ class RequestsScreen extends StatelessWidget {
     'Career': Icons.business_center,
     'Family': Icons.family_restroom,
     'Academic': Icons.school,
-    'Grief': Icons.sentiment_dissatisfied,
+    'Travel': Icons.travel_explore,
     'Animals': Icons.pets,
   };
 
@@ -32,7 +32,7 @@ class RequestsScreen extends StatelessWidget {
     'Career': Colors.blue,
     'Family': Colors.red,
     'Academic': Colors.orange,
-    'Grief': Colors.grey,
+    'Travel': Colors.teal,
     'Animals': Colors.green,
   };
 

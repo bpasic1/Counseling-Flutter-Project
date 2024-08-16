@@ -2,7 +2,6 @@ import 'package:counseling_flutter_app/widgets/message_chat_bubble.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -19,6 +18,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   String? chatPartnerName;
+  String? chatPartnerUsername;
 
   @override
   void initState() {
@@ -44,7 +44,9 @@ class _ChatScreenState extends State<ChatScreen> {
         .get();
 
     setState(() {
-      chatPartnerName = chatPartnerDoc['username'];
+      chatPartnerName =
+          '${chatPartnerDoc['firstName']} ${chatPartnerDoc['lastName']}';
+      chatPartnerUsername = chatPartnerDoc['username'];
     });
   }
 
@@ -52,7 +54,29 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(chatPartnerName ?? 'Chat'),
+        title: Row(
+          children: [
+            const CircleAvatar(
+              radius: 18, // Adjust size if needed
+              backgroundColor: Colors.grey, // You can customize the color
+              child: Icon(Icons.person, color: Colors.white),
+            ),
+            const SizedBox(width: 8), // Reduce the space here
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  chatPartnerName ?? '',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  '@$chatPartnerUsername' ?? '',
+                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
       body: Column(
         children: [

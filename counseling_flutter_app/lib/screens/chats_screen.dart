@@ -8,6 +8,7 @@ class ChatsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.lightBlue.shade100,
         title: const Text('Chats'),
       ),
       body: const SingleChatTab(),

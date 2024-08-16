@@ -18,6 +18,7 @@ class _SingleChatTabState extends State<SingleChatTab> {
   bool _showFloatingButton = false;
   bool _isDeleting = false;
   String _deleteMessage = '';
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -50,6 +51,7 @@ class _SingleChatTabState extends State<SingleChatTab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.lightBlue.shade50,
       key: _scaffoldKey,
       body: StreamBuilder<List<Map<String, dynamic>>>(
         stream: _fetchChats(),
@@ -66,18 +68,17 @@ class _SingleChatTabState extends State<SingleChatTab> {
                     itemCount: chats.length,
                     itemBuilder: (context, index) {
                       return ChatCard(
-                        name: chats[index]['name'],
+                        name: chats[index]['category'] != 'null'
+                            ? '${chats[index]['name']} - ${chats[index]['category']}'
+                            : chats[index]['name'],
                         onTap: () {
                           _startConversation(
                             selectedExpertName: chats[index]['name'],
-                            //username: chats[index]['username'],
-                            //chats[index]['id'],
                             documentId: chats[index]['document_id'],
                           );
                         },
                         onDeletePressed: () {
-                          _deleteChat(chats[index]
-                              ['document_id']); // Trigger delete logic here
+                          _deleteChat(chats[index]['document_id']);
                         },
                         isDeleting: _isDeleting,
                       );
@@ -88,55 +89,61 @@ class _SingleChatTabState extends State<SingleChatTab> {
       ),
       floatingActionButton: _showFloatingButton
           ? FloatingActionButton(
-              onPressed: () async {
-                final List<Map<String, dynamic>> chats =
-                    await _fetchChats().first;
-                final List<String> existingChatIds =
-                    chats.map((chat) => chat['id'] as String).toList();
-
-                final Map<String, dynamic>? selectedCategory =
-                    await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SelectCategoryScreen(),
-                  ),
-                );
-
-                if (selectedCategory != null) {
-                  final String categoryName =
-                      selectedCategory['name'] as String;
-                  final Color categoryColor =
-                      selectedCategory['color'] as Color;
-                  final IconData categoryIcon =
-                      selectedCategory['icon'] as IconData;
-
-                  final selectedExpert = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SelectExpertScreen(
-                        category: categoryName,
-                        categoryColor: categoryColor,
-                        categoryIcon: categoryIcon,
-                        existingChats: existingChatIds,
-                        refreshUI: refreshUI,
-                      ),
-                    ),
-                  );
-
-                  if (selectedExpert != null) {
-                    /* _startConversation(
-                    //selectedExpertId: selectedExpert['id'],
-                    //username: selectedExpert['username'],
-                    documentId: selectedExpert['document_id'],
-                    //selectedExpertName: selectedExpert['name'],
-                  ); */
-                  }
-                }
-              },
-              child: const Icon(Icons.add),
+              onPressed: _isLoading ? null : _handleFloatingActionButtonPressed,
+              child: _isLoading
+                  ? const CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    )
+                  : const Icon(Icons.add),
             )
           : null,
     );
+  }
+
+  Future<void> _handleFloatingActionButtonPressed() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final List<Map<String, dynamic>> chats = await _fetchChats().first;
+      final List<String> existingChatIds =
+          chats.map((chat) => chat['id'] as String).toList();
+
+      final Map<String, dynamic>? selectedCategory = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SelectCategoryScreen(),
+        ),
+      );
+
+      if (selectedCategory != null) {
+        final String categoryName = selectedCategory['name'] as String;
+        final Color categoryColor = selectedCategory['color'] as Color;
+        final IconData categoryIcon = selectedCategory['icon'] as IconData;
+
+        final selectedExpert = await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SelectExpertScreen(
+              category: categoryName,
+              categoryColor: categoryColor,
+              categoryIcon: categoryIcon,
+              existingChats: existingChatIds,
+              refreshUI: refreshUI,
+            ),
+          ),
+        );
+
+        if (selectedExpert != null) {
+          // Logic for starting the conversation
+        }
+      }
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   Stream<List<Map<String, dynamic>>> _fetchChats() {
@@ -165,9 +172,11 @@ class _SingleChatTabState extends State<SingleChatTab> {
               final expertData = await _getUserDetails(expertId);
               final expertName =
                   '${expertData['firstName']} ${expertData['lastName']}';
+              final expertExpertise = '${expertData['category']}';
               chats.add({
                 'name': expertName,
                 'id': expertId,
+                'category': expertExpertise,
                 'document_id': documentId
               });
               conversationIds.add(conversationId);
@@ -183,8 +192,10 @@ class _SingleChatTabState extends State<SingleChatTab> {
               final expertData = await _getUserDetails(expertId);
               final expertName =
                   '${expertData['firstName']} ${expertData['lastName']}';
+              final expertExpertise = '${expertData['category']}';
               chats.add({
                 'name': expertName,
+                'category': expertExpertise,
                 'id': expertId,
                 'document_id': documentId
               });

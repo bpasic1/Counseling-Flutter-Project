@@ -22,11 +22,7 @@ class _BecomeExpertScreenState extends State<BecomeExpertScreen> {
     {'name': 'Career', 'color': Colors.blue, 'icon': Icons.business_center},
     {'name': 'Family', 'color': Colors.red, 'icon': Icons.family_restroom},
     {'name': 'Academic', 'color': Colors.orange, 'icon': Icons.school},
-    {
-      'name': 'Grief',
-      'color': Colors.grey,
-      'icon': Icons.sentiment_dissatisfied
-    },
+    {'name': 'Travel', 'color': Colors.teal, 'icon': Icons.travel_explore},
     {'name': 'Animals', 'color': Colors.green, 'icon': Icons.pets},
   ];
 
@@ -104,12 +100,13 @@ class _BecomeExpertScreenState extends State<BecomeExpertScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.lightBlue.shade100,
         title: const Text('Become an Expert'),
       ),
+      backgroundColor: Colors.lightBlue.shade50,
       body: _isLoading
           ? Center(
-              child:
-                  CircularProgressIndicator(), // Show a loader while checking
+              child: CircularProgressIndicator(),
             )
           : _hasPendingRequest
               ? Center(
@@ -119,7 +116,7 @@ class _BecomeExpertScreenState extends State<BecomeExpertScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
                         Icon(Icons.hourglass_empty,
-                            size: 100, color: Colors.orange),
+                            size: 100, color: Colors.lightBlue),
                         SizedBox(height: 20),
                         Text(
                           'Your request is being processed.\nPlease wait for the administrator\'s decision.',
@@ -137,14 +134,14 @@ class _BecomeExpertScreenState extends State<BecomeExpertScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        /* const Text(
                           'Submit Your Request',
                           style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
                               color: Colors.lightBlue),
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 20), */
                         const Text(
                           'Please provide detailed information about your expertise. '
                           'Include links to your work (e.g., Google Drive, portfolio, publications) and explain why you believe you are qualified to become an expert.',

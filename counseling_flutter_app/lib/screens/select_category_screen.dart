@@ -8,11 +8,7 @@ class SelectCategoryScreen extends StatelessWidget {
     {'name': 'Career', 'color': Colors.blue, 'icon': Icons.business_center},
     {'name': 'Family', 'color': Colors.red, 'icon': Icons.family_restroom},
     {'name': 'Academic', 'color': Colors.orange, 'icon': Icons.school},
-    {
-      'name': 'Grief',
-      'color': Colors.grey,
-      'icon': Icons.sentiment_dissatisfied
-    },
+    {'name': 'Travel', 'color': Colors.teal, 'icon': Icons.travel_explore},
     {'name': 'Animals', 'color': Colors.green, 'icon': Icons.pets},
   ];
 

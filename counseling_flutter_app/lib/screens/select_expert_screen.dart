@@ -107,13 +107,14 @@ class ExpertList extends StatelessWidget {
                     expertName,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
                       fontSize: 18,
                     ),
                   ),
                   subtitle: Text(
                     expertData['information'] ??
                         'No bio available', // Replace with available field if you have it
-                    style: TextStyle(color: Colors.grey[600]),
+                    style: TextStyle(color: Colors.white70),
                   ),
                   leading: CircleAvatar(
                     backgroundColor: Colors.grey[300],

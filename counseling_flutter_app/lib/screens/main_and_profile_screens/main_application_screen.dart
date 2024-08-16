@@ -99,6 +99,7 @@ class _MainApplicationScreenState extends State<MainApplicationScreen> {
     return Scaffold(
       backgroundColor: Colors.lightBlue.shade50,
       appBar: AppBar(
+        backgroundColor: Colors.lightBlue.shade100,
         title: const Text('Advice Haven'),
         actions: [
           IconButton(
@@ -142,10 +143,14 @@ class _MainApplicationScreenState extends State<MainApplicationScreen> {
                       color: Colors.white,
                     ),
                     decoration: const BoxDecoration(
-                      color: Colors.blue,
+                      image: DecorationImage(
+                        image: AssetImage('assets/pozadina.jpg'),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                   ListTile(
+                    leading: const Icon(Icons.person),
                     title: const Text('Profile'),
                     onTap: () {
                       Navigator.pop(context);
@@ -164,6 +169,7 @@ class _MainApplicationScreenState extends State<MainApplicationScreen> {
                   ),
                   if (role == 'user' || role == 'expert') ...[
                     ListTile(
+                      leading: const Icon(Icons.chat),
                       title: const Text('Chats'),
                       onTap: () {
                         Navigator.pop(context);
@@ -178,6 +184,7 @@ class _MainApplicationScreenState extends State<MainApplicationScreen> {
                   ],
                   if (role == 'user') ...[
                     ListTile(
+                      leading: const Icon(Icons.star),
                       title: const Text('Become an Expert'),
                       onTap: () {
                         Navigator.pop(context);
@@ -192,6 +199,7 @@ class _MainApplicationScreenState extends State<MainApplicationScreen> {
                   ],
                   if (role == 'administrator') ...[
                     ListTile(
+                      leading: const Icon(Icons.request_page),
                       title: const Text('Requests'),
                       onTap: () {
                         Navigator.pop(context);
