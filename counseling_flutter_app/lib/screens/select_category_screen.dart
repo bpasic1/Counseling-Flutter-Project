@@ -1,7 +1,13 @@
+import 'package:counseling_flutter_app/screens/select_expert_screen.dart';
 import 'package:flutter/material.dart';
 
 class SelectCategoryScreen extends StatelessWidget {
-  SelectCategoryScreen({super.key});
+  final List<String> existingChats;
+  final Function refreshUI;
+
+  SelectCategoryScreen(
+      {Key? key, required this.existingChats, required this.refreshUI})
+      : super(key: key);
 
   final List<Map<String, dynamic>> categories = [
     {'name': 'Mental', 'color': Colors.purple, 'icon': Icons.psychology},
@@ -41,7 +47,18 @@ class SelectCategoryScreen extends StatelessWidget {
                       color: Colors.white, fontWeight: FontWeight.bold),
                 ),
                 onTap: () {
-                  Navigator.pop(context, category);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SelectExpertScreen(
+                        category: category['name'],
+                        categoryColor: category['color'],
+                        categoryIcon: category['icon'],
+                        existingChats: existingChats,
+                        refreshUI: refreshUI,
+                      ),
+                    ),
+                  );
                 },
               ),
             ),

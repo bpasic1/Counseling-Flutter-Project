@@ -1,3 +1,5 @@
+import 'package:counseling_flutter_app/screens/chats_screen.dart';
+import 'package:counseling_flutter_app/widgets/single_chat_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:counseling_flutter_app/service/firestore_service.dart';
@@ -71,23 +73,27 @@ class ExpertList extends StatelessWidget {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {
           final experts = snapshot.data!.docs;
-          if (experts.isEmpty) {
-            return const Center(child: Text('No experts found.'));
-          }
-
           final existingExpertIds = selectedExperts;
 
+          final availableExperts = experts.where((expert) {
+            final expertId = expert.id;
+            return !existingExpertIds.contains(expertId);
+          }).toList();
+
+          if (availableExperts.isEmpty) {
+            return const Center(
+                child: Text('No experts available in this category.'));
+          }
+
           return ListView.builder(
-            itemCount: experts.length,
+            itemCount: availableExperts.length,
             itemBuilder: (context, index) {
-              final expertData = experts[index].data() as Map<String, dynamic>;
-              final expertId = experts[index].id;
-              if (existingExpertIds.contains(expertId)) {
-                // If the expert is already in the chat list, don't display them
-                return const SizedBox.shrink();
-              }
+              final expertData =
+                  availableExperts[index].data() as Map<String, dynamic>;
+              final expertId = availableExperts[index].id;
               final expertName =
                   '${expertData['firstName']} ${expertData['lastName']}';
+
               return Card(
                 elevation: 4, // Adds a shadow effect
                 margin: const EdgeInsets.symmetric(
@@ -133,7 +139,9 @@ class ExpertList extends StatelessWidget {
                       // Start conversation between user and expert
                       await FirestoreService()
                           .startConversation(userId, expertId);
-                      Navigator.pop(context, expertName);
+
+                      int count = 0;
+                      Navigator.of(context).popUntil((_) => count++ >= 2);
                       refreshUI();
                     } else {
                       print('User not logged in');

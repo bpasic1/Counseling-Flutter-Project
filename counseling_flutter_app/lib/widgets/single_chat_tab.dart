@@ -110,35 +110,15 @@ class _SingleChatTabState extends State<SingleChatTab> {
       final List<String> existingChatIds =
           chats.map((chat) => chat['id'] as String).toList();
 
-      final Map<String, dynamic>? selectedCategory = await Navigator.push(
+      Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => SelectCategoryScreen(),
+          builder: (context) => SelectCategoryScreen(
+            existingChats: existingChatIds,
+            refreshUI: refreshUI,
+          ),
         ),
       );
-
-      if (selectedCategory != null) {
-        final String categoryName = selectedCategory['name'] as String;
-        final Color categoryColor = selectedCategory['color'] as Color;
-        final IconData categoryIcon = selectedCategory['icon'] as IconData;
-
-        final selectedExpert = await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SelectExpertScreen(
-              category: categoryName,
-              categoryColor: categoryColor,
-              categoryIcon: categoryIcon,
-              existingChats: existingChatIds,
-              refreshUI: refreshUI,
-            ),
-          ),
-        );
-
-        if (selectedExpert != null) {
-          // Logic for starting the conversation
-        }
-      }
     } finally {
       setState(() {
         _isLoading = false;
