@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 
 class DetailedRequestScreen extends StatelessWidget {
   final String userName;
@@ -64,23 +63,14 @@ class DetailedRequestScreen extends StatelessWidget {
                 ),
                 actions: [
                   TextButton(
-                    child: const Text('Cancel'),
                     onPressed: isSubmitting
                         ? null
                         : () {
                             Navigator.of(dialogContext).pop();
                           },
+                    child: const Text('Cancel'),
                   ),
                   TextButton(
-                    child: isSubmitting
-                        ? const SizedBox(
-                            height: 16,
-                            width: 16,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2.0,
-                            ),
-                          )
-                        : const Text('Submit'),
                     onPressed: isSubmitting
                         ? null
                         : () async {
@@ -136,6 +126,15 @@ class DetailedRequestScreen extends StatelessWidget {
                               );
                             }
                           },
+                    child: isSubmitting
+                        ? const SizedBox(
+                            height: 16,
+                            width: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.0,
+                            ),
+                          )
+                        : const Text('Submit'),
                   ),
                 ],
               );

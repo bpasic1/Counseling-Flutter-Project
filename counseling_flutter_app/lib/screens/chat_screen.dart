@@ -70,7 +70,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  '@$chatPartnerUsername' ?? '',
+                  '@$chatPartnerUsername',
                   style: TextStyle(color: Colors.grey[600], fontSize: 12),
                 ),
               ],

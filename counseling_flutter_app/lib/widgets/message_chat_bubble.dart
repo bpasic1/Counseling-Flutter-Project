@@ -35,16 +35,14 @@ class MessageBubble extends StatelessWidget {
           return const Text('User not found');
         }
 
-        String username = snapshot.data!['username'];
-
         return Column(
           crossAxisAlignment: isExpertMessage
               ? CrossAxisAlignment.start
               : CrossAxisAlignment.end,
           children: [
             if (isFirstMessageInRow)
-              Padding(
-                padding: const EdgeInsets.symmetric(
+              const Padding(
+                padding: EdgeInsets.symmetric(
                   vertical: 4,
                   horizontal: 8,
                 ),

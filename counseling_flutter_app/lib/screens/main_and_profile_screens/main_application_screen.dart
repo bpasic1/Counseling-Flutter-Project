@@ -228,22 +228,27 @@ class _MainApplicationScreenState extends State<MainApplicationScreen> {
               height: 200,
             ),
             const SizedBox(height: 20),
-            const Text(
-              'Welcome to Advice Haven!',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+            const Center(
+              child: Text(
+                'Welcome to Advice Haven!',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
               ),
             ),
             const SizedBox(height: 20),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                'We are here to provide you with support and guidance '
-                'through your journey!',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
+              child: Center(
+                child: Text(
+                  'We are here to provide you with support and guidance '
+                  'through your journey!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                  ),
                 ),
               ),
             ),

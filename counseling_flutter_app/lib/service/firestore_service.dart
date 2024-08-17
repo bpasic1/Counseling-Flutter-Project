@@ -21,7 +21,6 @@ class FirestoreService {
       print('Conversation started successfully');
     } catch (e) {
       print('Error starting conversation: $e');
-      // Handle error
     }
   }
 }

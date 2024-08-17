@@ -79,8 +79,6 @@ class _SignUpFormState extends State<SignUpForm> {
           'role': 'user'
         });
 
-        print('User added to Firestore successfully.');
-
         widget.navigateBack();
       } on FirebaseAuthException catch (error) {
         ScaffoldMessenger.of(context).clearSnackBars();

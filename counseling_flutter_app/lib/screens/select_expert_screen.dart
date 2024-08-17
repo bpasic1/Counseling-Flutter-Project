@@ -1,5 +1,3 @@
-import 'package:counseling_flutter_app/screens/chats_screen.dart';
-import 'package:counseling_flutter_app/widgets/single_chat_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:counseling_flutter_app/service/firestore_service.dart';
@@ -111,25 +109,23 @@ class ExpertList extends StatelessWidget {
                       right: 10.0), // Padding inside the card
                   title: Text(
                     expertName,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                       fontSize: 18,
                     ),
                   ),
                   subtitle: Text(
-                    expertData['information'] ??
-                        'No bio available', // Replace with available field if you have it
-                    style: TextStyle(color: Colors.white70),
+                    expertData['information'] ?? 'No bio available',
+                    style: const TextStyle(color: Colors.white70),
                   ),
                   leading: CircleAvatar(
                     backgroundColor: Colors.grey[300],
                     backgroundImage: expertData['profilePicture'] != null
-                        ? NetworkImage(expertData[
-                            'profilePicture']) // Use this when you have a URL
-                        : null, // Placeholder or default image if no picture is available
+                        ? NetworkImage(expertData['profilePicture'])
+                        : null,
                     child: expertData['profilePicture'] == null
-                        ? Icon(Icons.person, color: Colors.grey) // Default icon
+                        ? const Icon(Icons.person, color: Colors.grey)
                         : null,
                   ),
                   onTap: () async {
