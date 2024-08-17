@@ -26,35 +26,34 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
             controller: newPasswordController,
             decoration: const InputDecoration(labelText: 'New Password'),
             obscureText: true,
-            enabled: !isLoading, // Disable text field while loading
+            enabled: !isLoading,
           ),
           TextField(
             controller: confirmNewPasswordController,
             decoration:
                 const InputDecoration(labelText: 'Confirm New Password'),
             obscureText: true,
-            enabled: !isLoading, // Disable text field while loading
+            enabled: !isLoading,
           ),
         ],
       ),
       actions: [
         TextButton(
           onPressed: isLoading
-              ? null // Disable the button while loading
+              ? null
               : () {
-                  Navigator.pop(context); // Close the dialog
+                  Navigator.pop(context);
                 },
           child: const Text('Cancel'),
         ),
         ElevatedButton(
           onPressed: isLoading
-              ? null // Disable the button while loading
+              ? null
               : () async {
                   String newPassword = newPasswordController.text.trim();
                   String confirmNewPassword =
                       confirmNewPasswordController.text.trim();
 
-                  // Validate if new password and confirm new password match
                   if (newPassword != confirmNewPassword) {
                     ScaffoldMessenger.of(context).clearSnackBars();
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -67,7 +66,6 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                   }
 
                   if (newPassword.length < 6) {
-                    // Password too short, display error message
                     ScaffoldMessenger.of(context).clearSnackBars();
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -78,21 +76,25 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                     return;
                   }
 
-                  // Set loading state
                   setState(() {
                     isLoading = true;
                   });
 
-                  // Call the function to change password
                   await _changePassword(context, newPassword);
 
-                  // Reset loading state
                   setState(() {
                     isLoading = false;
                   });
                 },
           child: isLoading
-              ? const CircularProgressIndicator() // Show circular progress indicator
+              ? const SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
               : const Text('Change'),
         ),
       ],

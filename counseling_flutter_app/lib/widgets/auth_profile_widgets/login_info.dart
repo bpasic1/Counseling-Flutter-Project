@@ -7,25 +7,42 @@ import 'dart:convert';
 
 final _firebaseAuth = FirebaseAuth.instance;
 
-class LoginForm extends StatelessWidget {
+class LoginForm extends StatefulWidget {
   final VoidCallback navigateBack;
 
   const LoginForm({super.key, required this.navigateBack});
 
+  @override
+  State<LoginForm> createState() => _LoginFormState();
+}
+
+class _LoginFormState extends State<LoginForm> {
+  bool _isLoading = false;
+
   void _signInWithEmailAndPassword(
-      BuildContext context, String email, String password) async {
+    BuildContext context,
+    String email,
+    String password,
+  ) async {
     try {
+      setState(() {
+        _isLoading = true;
+      });
       final userCredentials = await _firebaseAuth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      navigateBack();
+      widget.navigateBack();
     } on FirebaseAuthException catch (error) {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(error.message ?? 'Authentication failed.'),
       ));
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -100,23 +117,27 @@ class LoginForm extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () =>
-                _signInWithEmailAndPassword(context, email, password),
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-              backgroundColor: Theme.of(context).colorScheme.primary,
-            ),
-            child: const Text(
-              'Sign In',
-              style: TextStyle(fontSize: 16, color: Colors.white),
-            ),
-          ),
+          _isLoading
+              ? const CircularProgressIndicator()
+              : ElevatedButton(
+                  onPressed: () =>
+                      _signInWithEmailAndPassword(context, email, password),
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 30),
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                  ),
+                  child: const Text(
+                    'Sign In',
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ),
           TextButton(
-            onPressed: () => _showForgotPasswordDialog(context),
+            onPressed:
+                _isLoading ? null : () => _showForgotPasswordDialog(context),
             child: const Text('Forgot Password?'),
           ),
         ],

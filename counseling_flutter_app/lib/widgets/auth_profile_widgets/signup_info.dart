@@ -21,6 +21,8 @@ class _SignUpFormState extends State<SignUpForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  bool _isLoading = false;
+
   String? _validateFirstName(String? value) {
     if (value == null || value.isEmpty || value.length <= 1) {
       return 'First name must be longer than 1 character';
@@ -53,6 +55,10 @@ class _SignUpFormState extends State<SignUpForm> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
+      setState(() {
+        _isLoading = true;
+      });
+
       String firstName = _firstNameController.text;
       String lastName = _lastNameController.text;
       String email = _emailController.text;
@@ -81,6 +87,10 @@ class _SignUpFormState extends State<SignUpForm> {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(error.message ?? 'Authentication failed.'),
         ));
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
@@ -153,26 +163,28 @@ class _SignUpFormState extends State<SignUpForm> {
               ),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _submitForm,
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  vertical: 15,
-                  horizontal: 30,
-                ),
-                backgroundColor: Theme.of(context).colorScheme.primary,
-              ),
-              child: const Text(
-                'Sign Up',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                ),
-              ),
-            ),
+            _isLoading
+                ? const CircularProgressIndicator()
+                : ElevatedButton(
+                    onPressed: _submitForm,
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 15,
+                        horizontal: 30,
+                      ),
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                    ),
+                    child: const Text(
+                      'Sign Up',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
           ],
         ),
       ),

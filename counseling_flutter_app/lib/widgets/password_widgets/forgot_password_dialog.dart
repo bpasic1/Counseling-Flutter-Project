@@ -41,9 +41,11 @@ class _ForgotPasswordDialogState extends State<ForgotPasswordDialog> {
       ),
       actions: [
         TextButton(
-          onPressed: () {
-            Navigator.pop(context); // Close the dialog
-          },
+          onPressed: isLoading
+              ? null
+              : () {
+                  Navigator.pop(context);
+                },
           child: const Text('Cancel'),
         ),
         ElevatedButton(

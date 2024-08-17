@@ -40,73 +40,106 @@ class DetailedRequestScreen extends StatelessWidget {
         throw Exception('Authenticated user is not an administrator');
       }
 
-      // Show dialog for entering expertise information
       String expertiseInfo = '';
+      bool isSubmitting = false;
+
       showDialog(
         context: context,
+        barrierDismissible:
+            false, // Prevent closing the dialog when tapping outside
         builder: (BuildContext dialogContext) {
-          return AlertDialog(
-            backgroundColor: Colors.white, // Customize background color
-            title: const Text('Enter Expertise Information'),
-            content: TextField(
-              onChanged: (value) {
-                expertiseInfo = value;
-              },
-              decoration: const InputDecoration(
-                hintText: 'Expertise Information',
-                border: OutlineInputBorder(), // Add border to the TextField
-              ),
-            ),
-            actions: [
-              TextButton(
-                child: const Text('Cancel'),
-                onPressed: () {
-                  Navigator.of(dialogContext).pop(); // Close the dialog
-                },
-              ),
-              TextButton(
-                child: const Text('Submit'),
-                onPressed: () async {
-                  // Update user role and category
-                  await FirebaseFirestore.instance
-                      .collection('users')
-                      .doc(userId)
-                      .update({
-                    'role': 'expert',
-                    'category': category,
-                    'information': expertiseInfo, // Add expertise info
-                  });
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return AlertDialog(
+                backgroundColor: Colors.white,
+                title: const Text('Enter Expertise Information'),
+                content: TextField(
+                  onChanged: (value) {
+                    expertiseInfo = value;
+                  },
+                  decoration: const InputDecoration(
+                    hintText: 'Expertise Information',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    child: const Text('Cancel'),
+                    onPressed: isSubmitting
+                        ? null
+                        : () {
+                            Navigator.of(dialogContext).pop();
+                          },
+                  ),
+                  TextButton(
+                    child: isSubmitting
+                        ? const SizedBox(
+                            height: 16,
+                            width: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.0,
+                            ),
+                          )
+                        : const Text('Submit'),
+                    onPressed: isSubmitting
+                        ? null
+                        : () async {
+                            setState(() {
+                              isSubmitting = true;
+                            });
 
-                  // Delete existing conversations for the user
-                  QuerySnapshot conversationSnapshot = await FirebaseFirestore
-                      .instance
-                      .collection('conversations')
-                      .where('user_id', isEqualTo: userId)
-                      .get();
+                            try {
+                              await FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(userId)
+                                  .update({
+                                'role': 'expert',
+                                'category': category,
+                                'information': expertiseInfo,
+                              });
 
-                  for (var doc in conversationSnapshot.docs) {
-                    await doc.reference.delete();
-                  }
+                              // Delete existing conversations for the user
+                              QuerySnapshot conversationSnapshot =
+                                  await FirebaseFirestore.instance
+                                      .collection('conversations')
+                                      .where('user_id', isEqualTo: userId)
+                                      .get();
 
-                  // Delete the request
-                  await FirebaseFirestore.instance
-                      .collection('expertRequests')
-                      .doc(requestId)
-                      .delete();
+                              for (var doc in conversationSnapshot.docs) {
+                                await doc.reference.delete();
+                              }
 
-                  // Show the snackbar
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text('User has been promoted to expert')),
-                  );
+                              // Delete the request
+                              await FirebaseFirestore.instance
+                                  .collection('expertRequests')
+                                  .doc(requestId)
+                                  .delete();
 
-                  // Close the dialog and the DetailedRequestScreen
-                  Navigator.of(dialogContext).pop(); // Close the dialog
-                  Navigator.of(context)
-                      .pop(); // Close the DetailedRequestScreen
-                },
-              ),
-            ],
+                              // Show the snackbar
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text(
+                                        'User has been promoted to expert')),
+                              );
+
+                              // Close the dialog and the DetailedRequestScreen
+                              Navigator.of(dialogContext).pop();
+                              Navigator.of(context).pop();
+                            } catch (error) {
+                              setState(() {
+                                isSubmitting = false;
+                              });
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content:
+                                        Text('Failed to promote user: $error')),
+                              );
+                            }
+                          },
+                  ),
+                ],
+              );
+            },
           );
         },
       );
