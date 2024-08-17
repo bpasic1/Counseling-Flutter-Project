@@ -68,6 +68,7 @@ class _LoginFormState extends State<LoginForm> {
 
   void _showForgotPasswordDialog(BuildContext context) {
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (context) => ForgotPasswordDialog(
         onResetPassword: (email) async {

@@ -54,6 +54,10 @@ class ChatCard extends StatelessWidget {
                 Navigator.of(context).pop();
                 onDeletePressed();
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+              ),
               child: const Text("Delete"),
             ),
           ],

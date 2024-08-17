@@ -44,21 +44,35 @@ class DetailedRequestScreen extends StatelessWidget {
 
       showDialog(
         context: context,
-        barrierDismissible:
-            false, // Prevent closing the dialog when tapping outside
+        barrierDismissible: false,
         builder: (BuildContext dialogContext) {
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return AlertDialog(
                 backgroundColor: Colors.white,
-                title: const Text('Enter Expertise Information'),
+                title: const Text(
+                  'Enter Expertise Information',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blueAccent,
+                  ),
+                ),
                 content: TextField(
                   onChanged: (value) {
                     expertiseInfo = value;
                   },
-                  decoration: const InputDecoration(
+                  maxLines: 3,
+                  decoration: InputDecoration(
                     hintText: 'Expertise Information',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.blueAccent, width: 2.0),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 ),
                 actions: [
@@ -135,6 +149,13 @@ class DetailedRequestScreen extends StatelessWidget {
                             ),
                           )
                         : const Text('Submit'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
                   ),
                 ],
               );
