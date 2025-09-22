@@ -1,4 +1,4 @@
-# Counseling-Flutter-Project
+# Counseling Flutter Project
 This project demonstrates the use of **Firebase Cloud Functions** to extend the functionality of a mobile application without relying on traditional server infrastructure. The app itself is a counseling platform where users can connect with selected experts, but its main purpose was to showcase how serverless architecture can support background tasks and improve security.
 
 ## Features
